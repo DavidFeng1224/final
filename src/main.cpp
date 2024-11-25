@@ -1,65 +1,117 @@
 #define SDL_MAIN_HANDLED  // 告訴 SDL2 不要自動處理 main 函數
 #include <SDL2/SDL.h>
+#include <iostream>
 #include "Menu.h"
+#include "Global.h"
 
-#define WIDTH 800
-#define HEIGHT 600
+Gamemode gamemode = MENU;
 
-int main(int argc, char* argv[]) {
-    // 初始化 SDL
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
+using namespace std;
+
+// SDL global variables
+SDL_Window* gWindow = NULL;
+SDL_Renderer* gRenderer = NULL;
+
+// Starts up SDL and creates window
+bool init();
+
+// Frees media and shuts down SDL
+void close();
+
+// Render instructions
+void renderInstructions(SDL_Renderer* renderer);
+
+bool init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        SDL_Log("SDL could not initialize! SDL_Error: %s", SDL_GetError());
-        return 1;
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+        return false;
     }
 
-    // 創建視窗
-    SDL_Window* window = SDL_CreateWindow("Game Menu", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-    if (!window) {
-        SDL_Log("Window could not be created! SDL_Error: %s", SDL_GetError());
-        SDL_Quit();
-        return 1;
+    gWindow = SDL_CreateWindow("COURSE CONQUEROR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (gWindow == NULL) {
+        printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+        return false;
     }
 
-    // 創建渲染器
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer) {
-        SDL_Log("Renderer could not be created! SDL_Error: %s", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    if (gRenderer == NULL) {
+        printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+        return false;
     }
 
-    // 創建 Menu
-    Menu menu(renderer);
+    return true;
+}
 
-    // 主遊戲循環
-    bool isRunning = true;
+void close() {
+    SDL_DestroyRenderer(gRenderer);
+    SDL_DestroyWindow(gWindow);
+    SDL_Quit();
+}
+
+void renderInstructions(SDL_Renderer* renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Black background
+    SDL_RenderClear(renderer);
+
+    SDL_Rect instructionRect = {200, 200, 800, 500};
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // White
+    SDL_RenderFillRect(renderer, &instructionRect);
+
+    SDL_RenderPresent(renderer);
+}
+
+int main(int argc, char* args[]) {
+    if (!init()) {
+        printf("Failed to initialize!\n");
+        return -1;
+    }
+
+    Menu menu(gRenderer);  // Create the menu instance
+
+    bool quit = false;
     SDL_Event e;
-    while (isRunning) {
+
+    while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
-                isRunning = false;
-            } else {
+                quit = true;
+            }
+
+            if (gamemode == MENU) {
                 menu.handleEvent(e);
             }
         }
 
-        // 清除渲染器
-        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);  // Black background
+        SDL_RenderClear(gRenderer);
 
-        // 更新和繪製菜單
-        menu.update();
-        menu.render();
+        switch (gamemode) {
+            case MENU:
+                menu.render(gRenderer);
+                break;
 
-        // 顯示渲染內容
-        SDL_RenderPresent(renderer);
+            case INGAME:
+                SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);  // Green background
+                SDL_RenderClear(gRenderer);
+                break;
+
+            case INSTRUCTIONS:
+                renderInstructions(gRenderer);
+                break;
+
+            case EXIT:
+                quit = true;
+                break;
+
+            default:
+                break;
+        }
+
+        SDL_RenderPresent(gRenderer);
     }
 
-    // 清理資源
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    close();
     return 0;
 }
-// this is David Feng

@@ -2,29 +2,24 @@
 #define MENU_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>  // 用於文字渲染
-#include <string>
+#include <SDL2/SDL_ttf.h>
+#include <vector>
+#include "Button.h"
+#include "Global.h"
+
+using namespace std;
 
 class Menu {
+private:
+    vector<Button> buttons;
+    TTF_Font* font;
+    SDL_Color backgroundColor;
+
 public:
     Menu(SDL_Renderer* renderer);
-    ~Menu();
 
     void handleEvent(SDL_Event& e);
-    void update();
-    void render();
-    bool running() const;  // 確認是否還在運行
-
-private:
-    SDL_Renderer* renderer;
-    bool isRunning;
-
-    SDL_Rect startButton, howToPlayButton, settingsButton, exitButton;
-    TTF_Font* font;  // 宣告字型指標
-
-    void renderButton(SDL_Rect& button, const std::string& text, bool isHovered, int borderThickness);
-    void handleButtonClick(int x, int y);
-    bool isMouseOverButton(const SDL_Rect& button);  // 判斷滑鼠是否在按鈕上
+    void render(SDL_Renderer* renderer);
 };
 
-#endif // MENU_H
+#endif
