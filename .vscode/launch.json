@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/User/Desktop/final/src",
-      "program": "c:/Users/User/Desktop/final/src/build/Debug/outDebug",
+      "cwd": "c:/Users/user/OneDrive/文档/GitHub/final/src",
+      "program": "c:/Users/user/OneDrive/文档/GitHub/final/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
