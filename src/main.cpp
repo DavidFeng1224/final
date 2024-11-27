@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "Menu.h"
+#include "Game.h"
 #include "Global.h"
 
 Gamemode gamemode = MENU;
@@ -69,6 +70,7 @@ int main(int argc, char* args[]) {
     }
 
     Menu menu(gRenderer);  // Create the menu instance
+    Game game(gRenderer);  // Create the menu instance
 
     bool quit = false;
     SDL_Event e;
@@ -82,6 +84,24 @@ int main(int argc, char* args[]) {
             if (gamemode == MENU) {
                 menu.handleEvent(e);
             }
+            switch (gamemode) {
+                case MENU:
+                    menu.handleEvent(e);
+                    break;
+
+                case INGAME:
+                    game.handleEvent(e);
+                    break;
+
+                case INSTRUCTIONS:
+                    break;
+
+                case EXIT:
+                    break;
+
+                default:
+                    break;
+        }
         }
 
         SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);  // Black background
