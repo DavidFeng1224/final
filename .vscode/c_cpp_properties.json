@@ -5,7 +5,7 @@
       "includePath": [
         "${workspaceFolder}/**"
       ],
-      "compilerPath": "C:/llvm-mingw-20241030-msvcrt-x86_64/bin/gcc.exe",
+      "compilerPath": "C:/llvm-mingw-20241119-msvcrt-x86_64/llvm-mingw-20241119-msvcrt-x86_64/bin/gcc.exe",
       "cStandard": "${default}",
       "cppStandard": "${default}",
       "intelliSenseMode": "windows-gcc-x64",
