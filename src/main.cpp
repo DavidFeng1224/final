@@ -3,12 +3,10 @@
 #include <iostream>
 #include "Menu.h"
 #include "Game.h"
+#include "Instruction.h"
 #include "Global.h"
 
 Gamemode gamemode = MENU;
-
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
 
 using namespace std;
 
@@ -16,14 +14,8 @@ using namespace std;
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
-// Starts up SDL and creates window
 bool init();
-
-// Frees media and shuts down SDL
 void close();
-
-// Render instructions
-void renderInstructions(SDL_Renderer* renderer);
 
 bool init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -45,23 +37,12 @@ bool init() {
 
     return true;
 }
-
 void close() {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
     SDL_Quit();
 }
 
-void renderInstructions(SDL_Renderer* renderer) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Black background
-    SDL_RenderClear(renderer);
-
-    SDL_Rect instructionRect = {200, 200, 800, 500};
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // White
-    SDL_RenderFillRect(renderer, &instructionRect);
-
-    SDL_RenderPresent(renderer);
-}
 
 int main(int argc, char* args[]) {
     if (!init()) {
@@ -69,8 +50,9 @@ int main(int argc, char* args[]) {
         return -1;
     }
 
-    Menu menu(gRenderer);  // Create the menu instance
-    Game game(gRenderer);  // Create the menu instance
+    Menu menu(gRenderer);
+    Game game(gRenderer);
+    Instruction instruction(gRenderer);
 
     bool quit = false;
     SDL_Event e;
@@ -79,10 +61,6 @@ int main(int argc, char* args[]) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
-            }
-
-            if (gamemode == MENU) {
-                menu.handleEvent(e);
             }
             switch (gamemode) {
                 case MENU:
@@ -94,6 +72,7 @@ int main(int argc, char* args[]) {
                     break;
 
                 case INSTRUCTIONS:
+                    instruction.handleEvent(e);
                     break;
 
                 case EXIT:
@@ -101,7 +80,7 @@ int main(int argc, char* args[]) {
 
                 default:
                     break;
-        }
+            }
         }
 
         SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);  // Black background
@@ -113,12 +92,13 @@ int main(int argc, char* args[]) {
                 break;
 
             case INGAME:
-                SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);  // Green background
-                SDL_RenderClear(gRenderer);
+                game.render(gRenderer);
+                // SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);  // Green background
+                // SDL_RenderClear(gRenderer);
                 break;
 
             case INSTRUCTIONS:
-                renderInstructions(gRenderer);
+                instruction.render(gRenderer);
                 break;
 
             case EXIT:
