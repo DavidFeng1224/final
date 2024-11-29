@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>  // 用於圖片處理
+#include <SDL2/SDL_image.h>
 #include "Global.h"
 
 class Instruction {

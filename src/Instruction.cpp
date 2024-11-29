@@ -40,25 +40,12 @@ void Instruction::handleEvent(SDL_Event& e) {
 
 void Instruction::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-    SDL_RenderClear(renderer);  // 清空畫面並填充背景顏色
+    SDL_RenderClear(renderer);
 
-    int imgWidth = SCREEN_WIDTH * 4 / 5;  // 圖片寬度佔螢幕 4/5
-    int imgHeight = SCREEN_HEIGHT * 4 / 5;  // 圖片高度佔螢幕 4/5
-
-    // 計算圖片放置的偏移量，將其放在正中央
-    int offsetX = (SCREEN_WIDTH - imgWidth) / 2;
-    int offsetY = (SCREEN_HEIGHT - imgHeight) / 2;
-
-    // 設定圖片渲染區域
-    SDL_Rect destRect = { offsetX, offsetY, imgWidth, imgHeight };
-
-    // 渲染背景圖片，如果圖片成功加載
     if (backgroundTexture) {
-        // 將圖片渲染到整個畫面
-        SDL_RenderCopy(renderer, backgroundTexture, NULL, &destRect);  // NULL表示整個圖片
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
     }
 
-    // 更新顯示
     SDL_RenderPresent(renderer);
 }
 
