@@ -7,21 +7,27 @@
 #include "Button.h"
 #include "Global.h"
 #include "Enemy.h"
+#include "Player.h"
 
 using namespace std;
 
 class Game {
 public:
+    // Constructor and destructor
     Game(SDL_Renderer* renderer);
     ~Game();
-    void render(SDL_Renderer* renderer);
+
+    // Main game functions
     void handleEvent(SDL_Event& e);
+    void render(SDL_Renderer* renderer);
+    void update(double deltaTime);
 private:
-    // Member variables for the game, e.g., grid, colorChangeFactor, etc.
-    float colorChangeFactor = 0.0f;  // Color change factor for the grid
+    float colorChangeFactor = 0.0f;
     
-    // Other member variables (such as game objects, buttons, etc.)
-    void drawGrid(SDL_Renderer* renderer, int window_width, int window_height, int grid_size, float colorChangeFactor);
+    void drawGrid(SDL_Renderer* renderer, int grid_size, float colorChangeFactor);
+
+    // Player instance
+    Player player;
 };
 
 #endif

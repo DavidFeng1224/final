@@ -37,12 +37,12 @@ bool init() {
 
     return true;
 }
+
 void close() {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
     SDL_Quit();
 }
-
 
 int main(int argc, char* args[]) {
     if (!init()) {
@@ -57,7 +57,13 @@ int main(int argc, char* args[]) {
     bool quit = false;
     SDL_Event e;
 
+    Uint32 lastTime = SDL_GetTicks();  // 記錄上次更新的時間
+
     while (!quit) {
+        Uint32 currentTime = SDL_GetTicks();
+        double deltaTime = (currentTime - lastTime) / 1000.0;  // 計算每幀的時間差，轉換為秒
+        lastTime = currentTime;  // 更新lastTime為當前時間
+
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
@@ -83,7 +89,9 @@ int main(int argc, char* args[]) {
             }
         }
 
-        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);  // Black background
+        game.update(deltaTime);  // 使用deltaTime來更新遊戲
+
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
         SDL_RenderClear(gRenderer);
 
         switch (gamemode) {
@@ -92,9 +100,7 @@ int main(int argc, char* args[]) {
                 break;
 
             case INGAME:
-                game.render(gRenderer);
-                // SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);  // Green background
-                // SDL_RenderClear(gRenderer);
+                game.render(gRenderer);  // 渲染遊戲
                 break;
 
             case INSTRUCTIONS:
