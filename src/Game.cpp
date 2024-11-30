@@ -15,6 +15,10 @@ Game::Game(SDL_Renderer* renderer)
         cout << "Failed to initialize SDL_ttf: " << TTF_GetError() << endl;
         return;
     }
+    // Initialize enemies
+    for (int i = 0; i < 5; ++i) {  // 設定 5 個敵人
+        enemies.emplace_back(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
 }
 
 Game::~Game() {
@@ -41,6 +45,10 @@ void Game::handleEvent(SDL_Event& e) {
 
 void Game::update(double deltaTime) {
     player.update(deltaTime);
+
+    for (auto& enemy : enemies) {
+        enemy.update(deltaTime);
+    }
 }
 
 void Game::drawGrid(SDL_Renderer* renderer, int grid_size, float colorChangeFactor) {
@@ -68,4 +76,8 @@ void Game::render(SDL_Renderer* renderer) {
     }
 
     player.render(renderer);  // 繪製玩家
+
+    for (auto& enemy : enemies) {
+        enemy.render(renderer);  // 繪製敵人
+    }
 }

@@ -2,23 +2,29 @@
 #define ENEMY_H
 
 #include <SDL2/SDL.h>
-#include <vector>
 
-class EnemyManager {
-private:
-    SDL_Renderer* renderer;
-    int screenWidth;
-    int screenHeight;
-    std::vector<SDL_Rect> enemies;
-    Uint32 lastSpawnTime;
-    const Uint32 SPAWN_INTERVAL = 1000; // 每秒生成一個敵人
-    const int ENEMY_WIDTH = 50;
-    const int ENEMY_HEIGHT = 50;
-
+class Enemy {
 public:
-    EnemyManager(SDL_Renderer* renderer, int screenWidth, int screenHeight);
-    void update();
-    void render();
+    // Constructor and destructor
+    Enemy(SDL_Renderer* renderer, int screen_width, int screen_height);
+    ~Enemy();
+
+    // Update position
+    void update(double deltaTime);
+
+    // Render enemy on the screen
+    void render(SDL_Renderer* renderer);
+
+private:
+    // Enemy position and movement
+    float x, y;
+    float speedX, speedY;
+
+    // Screen boundaries
+    int screenWidth, screenHeight;
+
+    // SDL texture for enemy
+    SDL_Texture* texture;
 };
 
 #endif

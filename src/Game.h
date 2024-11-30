@@ -26,6 +26,8 @@ private:
     
     void drawGrid(SDL_Renderer* renderer, int grid_size, float colorChangeFactor);
 
+    std::vector<Enemy> enemies;  // 敵人列表
+
     // Player instance
     Player player;
 };

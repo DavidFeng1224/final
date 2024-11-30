@@ -2,38 +2,61 @@
 #include "Button.h"
 #include "Global.h"
 #include <iostream>
+#include <SDL2/SDL_image.h>
 
 using namespace std;
 
-// Constructor for Menu
 Menu::Menu(SDL_Renderer* renderer) {
-    // Initialize SDL_ttf
+    // 初始化SDL_ttf
     if (TTF_Init() == -1) {
         cout << "Failed to initialize SDL_ttf: " << TTF_GetError() << endl;
-        return;  // Return early if initialization fails
+        return;
     }
 
-    // Define button colors
-    SDL_Color buttonColor = {255, 243, 190, 255};  // 淺黃色
-    SDL_Color textColor = {249, 87, 56, 255};          // 黑色文字
-    SDL_Color hoverColor = {255, 200, 100, 255};   // 滑鼠懸停顏色
-    SDL_Color borderColor = {0, 0, 0, 255};        // 黑色邊框
-    int borderThickness = 1;
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        cout << "Failed to initialize SDL_image: " << IMG_GetError() << endl;
+        return;
+    }
 
-    // Load font
+    backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Menu_Background.jpeg");  
+    if (!backgroundTexture) {
+        cout << "Failed to load background texture: " << IMG_GetError() << endl;
+    }
+
+    // 加載按鈕圖片
+    playButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_PLAY.png");
+    howToPlayButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_HOWTOPLAY.png");
+    exitButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_EXIT.png");
+
+    if (!playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
+        cout << "Failed to load button images: " << IMG_GetError() << endl;
+    }
+
+    // 定義按鈕顏色
+    // SDL_Color buttonColor = {255, 243, 190, 255};  // 淺黃色
+    SDL_Color textColor = {249, 87, 56, 255};      // 黑色文字
+    // SDL_Color hoverColor = {255, 200, 100, 255};   // 滑鼠懸停顏色
+    // SDL_Color borderColor = {0, 0, 0, 255};        // 黑色邊框
+
+    SDL_Color buttonColor = {0, 0, 0, 0};  // 背景顏色透明
+    SDL_Color hoverColor = {0, 0, 0, 0};   // 懸停顏色透明
+    SDL_Color borderColor = {0, 0, 0, 0};  // 邊框顏色透明
+    int borderThickness = 0;
+
+    // 加載字型
     font = TTF_OpenFont("assets/fonts/RussoOne-Regular.ttf", 24);
     if (!font) {
         cout << "Failed to load font: " << TTF_GetError() << endl;
-        return;  // Return early if the font fails to load
+        return;
     }
 
-    // Background color for the menu
+    // 設定背景顏色
     backgroundColor = {252, 234, 222, 255}; // 淺色背景
 
-    // Create buttons
-    Button playButton("Play", 300, 270, 200, 50, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
-    Button howToPlayButton("How to Play", 300, 340, 200, 50, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
-    Button exitButton("Exit", 300, 410, 200, 50, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
+    // 創建按鈕
+    Button playButton("Play", 310, 305, 180, 65, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
+    Button howToPlayButton("How to Play", 310, 395, 180, 65, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
+    Button exitButton("Exit", 310, 485, 180, 65, buttonColor, textColor, hoverColor, borderColor, borderThickness, font);
 
     // 設定按鈕的點擊事件
     playButton.setOnClick([]() {
@@ -60,6 +83,7 @@ Menu::Menu(SDL_Renderer* renderer) {
     buttons.push_back(exitButton);
 }
 
+
 // 處理事件（例如按鈕點擊）
 void Menu::handleEvent(SDL_Event& e) {
     for (auto& button : buttons) {
@@ -73,11 +97,48 @@ void Menu::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     SDL_RenderClear(renderer);  // 清空畫面並填充背景顏色
 
+    if (backgroundTexture) {
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);  // 渲染背景
+    }
+
     // 渲染每個按鈕
     for (auto& button : buttons) {
         button.render(renderer);
     }
 
+    // 渲染按鈕圖片，根據按鈕的位置渲染
+    if (playButtonTexture) {
+        SDL_Rect playButtonRect = {300, 300, 200, 75};
+        SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+    }
+
+    if (howToPlayButtonTexture) {
+        SDL_Rect howToPlayButtonRect = {300, 390, 200, 75};
+        SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+    }
+
+    if (exitButtonTexture) {
+        SDL_Rect exitButtonRect = {300, 480, 200, 75};
+        SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+    }
+
     SDL_RenderPresent(renderer);  // 更新顯示
 }
 
+
+Menu::~Menu() {
+    if (backgroundTexture) {
+        SDL_DestroyTexture(backgroundTexture);
+    }
+    if (playButtonTexture) {
+        SDL_DestroyTexture(playButtonTexture);
+    }
+    if (howToPlayButtonTexture) {
+        SDL_DestroyTexture(howToPlayButtonTexture);
+    }
+    if (exitButtonTexture) {
+        SDL_DestroyTexture(exitButtonTexture);
+    }
+
+    IMG_Quit();
+}
