@@ -4,7 +4,7 @@
 #include "Global.h"
 
 Player::Player(SDL_Renderer* renderer, double speed)
-    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(20),
+    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
       mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false) {}
 
 void Player::handleEvent(SDL_Event& e) {
@@ -36,6 +36,12 @@ void Player::update(double deltaTime) {
     if (mMoveDown) mPosY += mSpeed * deltaTime;  // 按下鍵時移動
     if (mMoveLeft) mPosX -= mSpeed * deltaTime;  // 按左鍵時移動
     if (mMoveRight) mPosX += mSpeed * deltaTime;  // 按右鍵時移動
+
+    if (mPosX - mRadius < 0) mPosX = mRadius;  // Left boundary
+    if (mPosX + mRadius > SCREEN_WIDTH) mPosX = SCREEN_WIDTH - mRadius;  // Right boundary
+    if (mPosY - mRadius < 0) mPosY = mRadius;  // Top boundary
+    if (mPosY + mRadius > SCREEN_HEIGHT) mPosY = SCREEN_HEIGHT - mRadius;  // Bottom boundary
+
 }
 
 void Player::render(SDL_Renderer* renderer) {
