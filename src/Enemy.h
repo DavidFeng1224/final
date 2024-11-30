@@ -2,11 +2,12 @@
 #define ENEMY_H
 
 #include <SDL2/SDL.h>
+#include "Global.h"
 
 class Enemy {
 public:
     // Constructor and destructor
-    Enemy(SDL_Renderer* renderer, int screen_width, int screen_height);
+    Enemy(SDL_Renderer* renderer);
     ~Enemy();
 
     // Update position
@@ -20,11 +21,8 @@ private:
     float x, y;
     float speedX, speedY;
 
-    // Screen boundaries
-    int screenWidth, screenHeight;
-
     // SDL texture for enemy
-    SDL_Texture* texture;
+    SDL_Texture* Texture;
 };
 
 #endif

@@ -4,7 +4,9 @@
 #include "Global.h"
 #include "Bullet.h"
 #include <iostream>
+
 using namespace std;
+
 Player::Player(SDL_Renderer* renderer, double speed)
     : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
       mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false) {}
@@ -15,15 +17,19 @@ void Player::handleEvent(SDL_Event& e) {
 
         switch (e.key.keysym.sym) {
             case SDLK_UP:
+            case SDLK_w:
                 mMoveUp = keyState;  // 記錄UP鍵的狀態
                 break;
             case SDLK_DOWN:
+            case SDLK_s:
                 mMoveDown = keyState;  // 記錄DOWN鍵的狀態
                 break;
             case SDLK_LEFT:
+            case SDLK_a:
                 mMoveLeft = keyState;  // 記錄LEFT鍵的狀態
                 break;
             case SDLK_RIGHT:
+            case SDLK_d:
                 mMoveRight = keyState;  // 記錄RIGHT鍵的狀態
                 break;
             default:
@@ -32,9 +38,9 @@ void Player::handleEvent(SDL_Event& e) {
     }
 
      if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
-         int mouseX, mouseY;
-         SDL_GetMouseState(&mouseX, &mouseY);
-         fireBullet(mouseX, mouseY);  // Fire bullet towards the mouse position
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        fireBullet(mouseX, mouseY);  // Fire bullet towards the mouse position
      }
 }
 
@@ -59,15 +65,17 @@ void Player::update(double deltaTime) {
     }
 
      // Remove inactive bullets
-     bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-                                 [](const Bullet& b) { return !b.isActive(); }),
-                   bullets.end());
+     bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](const Bullet& b) { return !b.isActive(); }), bullets.end());
 }
 
 void Player::render(SDL_Renderer* renderer) {
     int centerX = static_cast<int>(mPosX);
     int centerY = static_cast<int>(mPosY);
     int radius = mRadius;
+
+    for (auto& bullet : bullets) {
+        bullet.render(renderer);
+    }
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // 玩家顏色設為紅色
 
@@ -77,28 +85,23 @@ void Player::render(SDL_Renderer* renderer) {
                 SDL_RenderDrawPoint(renderer, centerX + w, centerY + h);  // 繪製圓形
             }
         }
-
     }
-    for (auto& bullet : bullets) {
-        bullet.render(renderer);
-    }
-    
 }
+
 void Player::fireBullet(int mouseX, int mouseY) {
     // Calculate direction vector
-     float dirX = mouseX - mPosX;
-     float dirY = mouseY - mPosY;
-     float magnitude = std::sqrt(dirX * dirX + dirY * dirY);
+    float dirX = mouseX - mPosX;
+    float dirY = mouseY - mPosY;
+    float magnitude = sqrt(dirX * dirX + dirY * dirY);
 
-     // 防止方向向量長度為零
+    // 防止方向向量長度為零
     if (magnitude < 0.001f) return;// 避免過小值
+
+    // Normalize direction vector and set bullet speed
+    dirX /= magnitude;
+    dirY /= magnitude;
+    float bulletSpeed = 300.0f;  // Example bullet speed
     
-
-
-     // Normalize direction vector and set bullet speed
-     dirX /= magnitude;
-     dirY /= magnitude;
-     float bulletSpeed = 300.0f;  // Example bullet speed
-     // Add a new bullet to the vector
-     bullets.emplace_back(mPosX, mPosY, dirX, dirY, bulletSpeed);
+    // Add a new bullet to the vector
+    bullets.emplace_back(mPosX, mPosY, dirX, dirY, bulletSpeed);
 }

@@ -33,11 +33,7 @@ Menu::Menu(SDL_Renderer* renderer) {
     }
 
     // 定義按鈕顏色
-    // SDL_Color buttonColor = {255, 243, 190, 255};  // 淺黃色
     SDL_Color textColor = {249, 87, 56, 255};      // 黑色文字
-    // SDL_Color hoverColor = {255, 200, 100, 255};   // 滑鼠懸停顏色
-    // SDL_Color borderColor = {0, 0, 0, 255};        // 黑色邊框
-
     SDL_Color buttonColor = {0, 0, 0, 0};  // 背景顏色透明
     SDL_Color hoverColor = {0, 0, 0, 0};   // 懸停顏色透明
     SDL_Color borderColor = {0, 0, 0, 0};  // 邊框顏色透明

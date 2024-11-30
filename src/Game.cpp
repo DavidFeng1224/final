@@ -17,7 +17,7 @@ Game::Game(SDL_Renderer* renderer)
     }
     // Initialize enemies
     for (int i = 0; i < 5; ++i) {  // 設定 5 個敵人
-        enemies.emplace_back(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+        enemies.emplace_back(renderer);
     }
 }
 
