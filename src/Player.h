@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
+#include <vector>
+#include "Bullet.h"
 
 class Player {
 public:
@@ -10,11 +12,15 @@ public:
     void update(double deltaTime);  // 更新玩家位置
     void render(SDL_Renderer* renderer);  // 渲染玩家
 
+    std::vector<Bullet> bullets;           // 存放所有玩家子彈的容器
+    void fireBullet(int mouseX, int mouseY); // 發射子彈函數
+
 private:
     double mSpeed;  // 玩家速度
+    double mMoveX, mMoveY;
     double mPosX, mPosY;  // 玩家位置
     int mRadius;  // 玩家半徑
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;  // 按鍵狀態
 };
 
-#endif // PLAYER_H
+#endif 
