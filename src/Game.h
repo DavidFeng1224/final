@@ -12,24 +12,17 @@
 using namespace std;
 
 class Game {
+private:
+    SDL_Texture* backgroundTexture = nullptr;  // 新增變數儲存背景圖片的紋理
+
+    vector<Enemy> enemies;
+    Player player;
 public:
-    // Constructor and destructor
     Game(SDL_Renderer* renderer);
     ~Game();
-
-    // Main game functions
     void handleEvent(SDL_Event& e);
     void render(SDL_Renderer* renderer);
     void update(double deltaTime);
-private:
-    float colorChangeFactor = 0.0f;
-    
-    void drawGrid(SDL_Renderer* renderer, int grid_size, float colorChangeFactor);
-
-    vector<Enemy> enemies;  // 敵人列表
-
-    // Player instance
-    Player player;
 };
 
 #endif

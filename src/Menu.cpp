@@ -19,21 +19,16 @@ Menu::Menu(SDL_Renderer* renderer) {
     }
 
     backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Menu_Background.jpeg");  
-    if (!backgroundTexture) {
-        cout << "Failed to load background texture: " << IMG_GetError() << endl;
-    }
-
-    // 加載按鈕圖片
     playButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_PLAY.png");
     howToPlayButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_HOWTOPLAY.png");
     exitButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_EXIT.png");
 
-    if (!playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
-        cout << "Failed to load button images: " << IMG_GetError() << endl;
+    if (!backgroundTexture || !playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
+        cout << "Failed to load images: " << IMG_GetError() << endl;
     }
 
     // 定義按鈕顏色
-    SDL_Color textColor = {249, 87, 56, 255};      // 黑色文字
+    SDL_Color textColor = {249, 87, 56, 255};   // 黑色文字
     SDL_Color buttonColor = {0, 0, 0, 0};  // 背景顏色透明
     SDL_Color hoverColor = {0, 0, 0, 0};   // 懸停顏色透明
     SDL_Color borderColor = {0, 0, 0, 0};  // 邊框顏色透明
