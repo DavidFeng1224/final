@@ -99,18 +99,33 @@ void Menu::render(SDL_Renderer* renderer) {
 
     // 渲染按鈕圖片，根據按鈕的位置渲染
     if (playButtonTexture) {
-        SDL_Rect playButtonRect = {300, 300, 200, 75};
-        SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        if(buttons[0].getIsHovered()){
+            SDL_Rect playButtonRect = {292, 295, 216, 85};
+            SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        }else{
+            SDL_Rect playButtonRect = {300, 300, 200, 75};
+            SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        }
     }
 
     if (howToPlayButtonTexture) {
-        SDL_Rect howToPlayButtonRect = {300, 390, 200, 75};
-        SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        if(buttons[1].getIsHovered()){
+            SDL_Rect howToPlayButtonRect = {292, 385, 216, 85};
+            SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        }else{
+            SDL_Rect howToPlayButtonRect = {300, 390, 200, 75};
+            SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        }        
     }
 
     if (exitButtonTexture) {
-        SDL_Rect exitButtonRect = {300, 480, 200, 75};
-        SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        if(buttons[2].getIsHovered()){
+            SDL_Rect exitButtonRect = {292, 475, 216, 85};
+            SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        }else{
+            SDL_Rect exitButtonRect = {300, 480, 200, 75};
+            SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        }
     }
 
     SDL_RenderPresent(renderer);  // 更新顯示

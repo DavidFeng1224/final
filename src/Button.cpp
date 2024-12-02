@@ -59,4 +59,5 @@ int Button::getX() const { return x; }
 int Button::getY() const { return y; }
 int Button::getWidth() const { return width; }
 int Button::getHeight() const { return height; }
+bool Button::getIsHovered() const { return isHovered; }
 std::string Button::getLabel() const { return label; }
