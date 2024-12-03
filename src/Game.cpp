@@ -1,12 +1,14 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include "Game.h"
 #include "Global.h"
 #include "Enemy.h"
 #include "Player.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <vector>
-#include <cmath>
-#include <iostream>
+
 using namespace std;
 
 Game::Game(SDL_Renderer* renderer)
@@ -15,13 +17,29 @@ Game::Game(SDL_Renderer* renderer)
         cout << "Failed to initialize SDL_ttf: " << TTF_GetError() << endl;
         return;
     }
+
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        cout << "Failed to initialize SDL_image: " << IMG_GetError() << endl;
+        return;
+    }
+
+    backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Background_Grass.jpeg");  
+    if (!backgroundTexture) {
+        cout << "Failed to load background texture: " << IMG_GetError() << endl;
+    }
+
     // Initialize enemies
     for (int i = 0; i < 5; ++i) {  // 設定 5 個敵人
-        enemies.emplace_back(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+        enemies.emplace_back(renderer);
     }
 }
 
 Game::~Game() {
+    if (backgroundTexture) {
+        SDL_DestroyTexture(backgroundTexture);
+    }
+    IMG_Quit();
+
     TTF_Quit();
 }
 
@@ -51,28 +69,12 @@ void Game::update(double deltaTime) {
     }
 }
 
-void Game::drawGrid(SDL_Renderer* renderer, int grid_size, float colorChangeFactor) {
-    Uint8 colorValue = static_cast<Uint8>(190 + 5 * sin(colorChangeFactor));
-    SDL_SetRenderDrawColor(renderer, colorValue, colorValue, colorValue, 255);
-
-    for (int x = 0; x <= SCREEN_WIDTH; x += grid_size) {
-        SDL_RenderDrawLine(renderer, x, 0, x, SCREEN_HEIGHT);
-    }
-
-    for (int y = 0; y <= SCREEN_HEIGHT; y += grid_size) {
-        SDL_RenderDrawLine(renderer, 0, y, SCREEN_WIDTH, y);
-    }
-}
-
 void Game::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 204, 204, 204, 255);  // 淡綠色背景
     SDL_RenderClear(renderer);
 
-    drawGrid(renderer, 40, colorChangeFactor);
-
-    colorChangeFactor += 0.0005f;
-    if (colorChangeFactor > 2.0f * M_PI) {
-        colorChangeFactor -= 2.0f * M_PI;
+    if (backgroundTexture) {
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);  // 渲染背景
     }
 
     player.render(renderer);  // 繪製玩家

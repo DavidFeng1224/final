@@ -30,6 +30,7 @@ public:
     int getY() const;
     int getWidth() const;
     int getHeight() const;
+    bool getIsHovered() const;
     std::string getLabel() const;
 };
 

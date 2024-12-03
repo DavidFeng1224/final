@@ -19,25 +19,16 @@ Menu::Menu(SDL_Renderer* renderer) {
     }
 
     backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Menu_Background.jpeg");  
-    if (!backgroundTexture) {
-        cout << "Failed to load background texture: " << IMG_GetError() << endl;
-    }
-
-    // 加載按鈕圖片
     playButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_PLAY.png");
     howToPlayButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_HOWTOPLAY.png");
     exitButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_EXIT.png");
 
-    if (!playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
-        cout << "Failed to load button images: " << IMG_GetError() << endl;
+    if (!backgroundTexture || !playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
+        cout << "Failed to load images: " << IMG_GetError() << endl;
     }
 
     // 定義按鈕顏色
-    // SDL_Color buttonColor = {255, 243, 190, 255};  // 淺黃色
-    SDL_Color textColor = {249, 87, 56, 255};      // 黑色文字
-    // SDL_Color hoverColor = {255, 200, 100, 255};   // 滑鼠懸停顏色
-    // SDL_Color borderColor = {0, 0, 0, 255};        // 黑色邊框
-
+    SDL_Color textColor = {249, 87, 56, 255};   // 黑色文字
     SDL_Color buttonColor = {0, 0, 0, 0};  // 背景顏色透明
     SDL_Color hoverColor = {0, 0, 0, 0};   // 懸停顏色透明
     SDL_Color borderColor = {0, 0, 0, 0};  // 邊框顏色透明
@@ -108,18 +99,33 @@ void Menu::render(SDL_Renderer* renderer) {
 
     // 渲染按鈕圖片，根據按鈕的位置渲染
     if (playButtonTexture) {
-        SDL_Rect playButtonRect = {300, 300, 200, 75};
-        SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        if(buttons[0].getIsHovered()){
+            SDL_Rect playButtonRect = {292, 295, 216, 85};
+            SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        }else{
+            SDL_Rect playButtonRect = {300, 300, 200, 75};
+            SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
+        }
     }
 
     if (howToPlayButtonTexture) {
-        SDL_Rect howToPlayButtonRect = {300, 390, 200, 75};
-        SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        if(buttons[1].getIsHovered()){
+            SDL_Rect howToPlayButtonRect = {292, 385, 216, 85};
+            SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        }else{
+            SDL_Rect howToPlayButtonRect = {300, 390, 200, 75};
+            SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
+        }        
     }
 
     if (exitButtonTexture) {
-        SDL_Rect exitButtonRect = {300, 480, 200, 75};
-        SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        if(buttons[2].getIsHovered()){
+            SDL_Rect exitButtonRect = {292, 475, 216, 85};
+            SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        }else{
+            SDL_Rect exitButtonRect = {300, 480, 200, 75};
+            SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
+        }
     }
 
     SDL_RenderPresent(renderer);  // 更新顯示
