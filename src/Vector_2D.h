@@ -1,7 +1,6 @@
 #ifndef VECTOR_2D_H
 #define VECTOR_2D_H
 
-using namespace std;
 
 class Vector2D
 {

@@ -15,15 +15,19 @@ void Player::handleEvent(SDL_Event& e) {
 
         switch (e.key.keysym.sym) {
             case SDLK_UP:
+            case SDLK_w:
                 mMoveUp = keyState;  // 記錄UP鍵的狀態
                 break;
             case SDLK_DOWN:
+            case SDLK_s:
                 mMoveDown = keyState;  // 記錄DOWN鍵的狀態
                 break;
             case SDLK_LEFT:
+            case SDLK_a:
                 mMoveLeft = keyState;  // 記錄LEFT鍵的狀態
                 break;
             case SDLK_RIGHT:
+            case SDLK_d:
                 mMoveRight = keyState;  // 記錄RIGHT鍵的狀態
                 break;
             default:
@@ -69,6 +73,10 @@ void Player::render(SDL_Renderer* renderer) {
     int centerY = static_cast<int>(mPosY);
     int radius = mRadius;
 
+    for (auto& bullet : bullets) {
+        bullet.render(renderer);
+    }
+
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // 玩家顏色設為紅色
 
     for (int w = -radius; w < radius; w++) {
@@ -78,9 +86,6 @@ void Player::render(SDL_Renderer* renderer) {
             }
         }
 
-    }
-    for (auto& bullet : bullets) {
-        bullet.render(renderer);
     }
     
 }
