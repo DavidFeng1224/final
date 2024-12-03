@@ -1,3 +1,4 @@
+//*
 #ifndef BULLET_H
 #define BULLET_H
 
@@ -20,3 +21,5 @@ public:
 };
 
 #endif
+//*/
+
