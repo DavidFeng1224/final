@@ -9,28 +9,27 @@
 using namespace std;
 
 // Constructor
-Enemy::Enemy(SDL_Renderer* renderer){
-    // Initialize random seed
+Enemy::Enemy(SDL_Renderer* renderer)
+    : BaseEnemy(renderer) {  // 正確初始化 BaseEnemy
+    // 初始化敵人特有的屬性
     std::srand(static_cast<unsigned>(std::time(0)));
 
-    // Randomly position the enemy within the screen boundaries
     x = static_cast<float>(std::rand() % SCREEN_WIDTH);
     y = static_cast<float>(std::rand() % SCREEN_HEIGHT);
 
-    // Randomize speed in both directions
-    speedX = static_cast<float>((std::rand() % 200) - 100) / 100.0f;
-    speedY = static_cast<float>((std::rand() % 200) - 100) / 100.0f;
+    float initialSpeed = static_cast<float>((std::rand() % 100) + 50) / 100.0f;
+    speedX = initialSpeed * ((std::rand() % 2 == 0) ? 1 : -1);
+    speedY = initialSpeed * ((std::rand() % 2 == 0) ? 1 : -1);
 
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-        cout << "Failed to initialize SDL_image: " << IMG_GetError() << endl;
-        return;
-    }
+    accelerationX = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
+    accelerationY = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
 
-    Texture = IMG_LoadTexture(renderer, "assets/images/Enemy.png");  
+    Texture = IMG_LoadTexture(renderer, "assets/images/Enemy.png");
     if (!Texture) {
-        cout << "Failed to load background texture: " << IMG_GetError() << endl;
+        std::cout << "Failed to load texture: " << IMG_GetError() << std::endl;
     }
 }
+
 
 // Destructor
 Enemy::~Enemy() {
@@ -42,20 +41,39 @@ Enemy::~Enemy() {
 
 // Update enemy position
 void Enemy::update(double deltaTime) {
+    // Apply acceleration to speed
+    speedX += accelerationX * deltaTime;
+    speedY += accelerationY * deltaTime;
+
+    float maxSpeed = 5.0f;  // Maximum allowable speed
+    // Manual clamp implementation
+    // Manual clamp implementation
+    speedX = (speedX < -maxSpeed) ? -maxSpeed : (speedX > maxSpeed ? maxSpeed : speedX);
+    speedY = (speedY < -maxSpeed) ? -maxSpeed : (speedY > maxSpeed ? maxSpeed : speedY);
+
+
+    // Update position based on the new speed
     x += speedX * deltaTime * 100;
     y += speedY * deltaTime * 100;
 
-    // Check for screen boundaries and reverse direction if needed
-    if (x < 0 || x > SCREEN_WIDTH) {
+    // Check for screen boundaries and adjust
+    if (x < 0) {
+        x = 0;
+        speedX = -speedX;  // Reverse direction
+    } else if (x > SCREEN_WIDTH - 50) {  // Assuming enemy width is 50
+        x = SCREEN_WIDTH - 50;
         speedX = -speedX;
-        x = x < 0 ? 0 : SCREEN_WIDTH;
     }
 
-    if (y < 0 || y > SCREEN_HEIGHT) {
+    if (y < 0) {
+        y = 0;
+        speedY = -speedY;  // Reverse direction
+    } else if (y > SCREEN_HEIGHT - 50) {  // Assuming enemy height is 50
+        y = SCREEN_HEIGHT - 50;
         speedY = -speedY;
-        y = y < 0 ? 0 : SCREEN_HEIGHT;
     }
 }
+
 
 // Render the enemy
 void Enemy::render(SDL_Renderer* renderer) {

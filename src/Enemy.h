@@ -1,28 +1,19 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include <SDL2/SDL.h>
-#include "Global.h"
+#include "BaseEnemy.h"
 
-class Enemy {
+class Enemy : public BaseEnemy {  // 繼承 BaseEnemy
 public:
-    // Constructor and destructor
     Enemy(SDL_Renderer* renderer);
     ~Enemy();
 
-    // Update position
-    void update(double deltaTime);
-
-    // Render enemy on the screen
-    void render(SDL_Renderer* renderer);
+    void update(double deltaTime) override;  // 實作基類純虛函數
+    void render(SDL_Renderer* renderer) override;  // 實作基類虛函數
 
 private:
-    // Enemy position and movement
-    float x, y;
-    float speedX, speedY;
-
-    // SDL texture for enemy
-    SDL_Texture* Texture;
+    float speedX, speedY;        // Speed
+    float accelerationX, accelerationY;  // Acceleration
 };
 
 #endif

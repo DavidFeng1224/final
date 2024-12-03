@@ -41,6 +41,11 @@ public:
     void fireBullet(int mouseX, int mouseY);
 
     std::vector<Bullet> bullets;
+     Player(float startX, float startY) : x(startX), y(startY) {}
+
+    // Accessor methods
+    float getX() const { return x; }
+    float getY() const { return y; }
 
 private:
     double mSpeed;
@@ -48,6 +53,7 @@ private:
     double mPosX, mPosY;
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
+    float x, y; // Assume these represent the player's position
 };
 
 #endif
