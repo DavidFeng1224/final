@@ -1,36 +1,9 @@
-// #ifndef PLAYER_H
-// #define PLAYER_H
-
-// #include <SDL2/SDL.h>
-// #include <vector>
-// #include "Bullet.h"
-
-// class Player {
-// public:
-//     Player(SDL_Renderer* renderer, double speed);  // Constructor
-//     void handleEvent(SDL_Event& e);  // 處理鍵盤事件
-//     void update(double deltaTime);  // 更新玩家位置
-//     void render(SDL_Renderer* renderer);  // 渲染玩家
-
-//     std::vector<Bullet> bullets;           // 存放所有玩家子彈的容器
-//     void fireBullet(int mouseX, int mouseY); // 發射子彈函數
-
-// private:
-//     double mSpeed;  // 玩家速度
-//     double mMoveX, mMoveY;
-//     double mPosX, mPosY;  // 玩家位置
-//     int mRadius;  // 玩家半徑
-//     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;  // 按鍵狀態
-// };
-
-// #endif 
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
-#include <vector>
-#include "Bullet.h"
+#include <vector> // 用於存放子彈
+#include "Bullet.h" // 包含 Bullet 的定義
 
 class Player {
 public:
@@ -40,20 +13,16 @@ public:
     void render(SDL_Renderer* renderer);
     void fireBullet(int mouseX, int mouseY);
 
-    std::vector<Bullet> bullets;
-     Player(float startX, float startY) : x(startX), y(startY) {}
-
-    // Accessor methods
-    float getX() const { return x; }
-    float getY() const { return y; }
+    float getX() const { return mPosX; }
+    float getY() const { return mPosY; }
 
 private:
     double mSpeed;
-    double mVelX, mVelY; // Track player's current velocity
-    double mPosX, mPosY;
+    double mPosX, mPosY; // 玩家當前的位置
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
-    float x, y; // Assume these represent the player's position
+
+    std::vector<Bullet> bullets; // 用於存放子彈的容器
 };
 
 #endif
