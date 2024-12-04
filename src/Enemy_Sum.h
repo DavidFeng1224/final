@@ -3,17 +3,13 @@
 
 #include "BaseEnemy.h"
 
-class Enemy_Sum : public BaseEnemy {  // 繼承 BaseEnemy
+class Enemy_Sum : public BaseEnemy {
 public:
     Enemy_Sum(SDL_Renderer *renderer);
     ~Enemy_Sum();
 
-    void update(double deltaTime) override;  // 實作基類純虛函數
-    void render(SDL_Renderer* renderer) override;  // 實作基類虛函數
-
-private:
-    float speedX, speedY;        // Speed
-    float accelerationX, accelerationY;  // Acceleration
+    void update(double deltaTime) override;
+    void render(SDL_Renderer* renderer) override;
 };
 
 #endif

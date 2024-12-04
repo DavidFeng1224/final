@@ -5,7 +5,7 @@
 #include "Game.h"
 #include "Instruction.h"
 #include "Global.h"
-#include "Enemy.h"
+
 
 
 Gamemode gamemode = MENU;

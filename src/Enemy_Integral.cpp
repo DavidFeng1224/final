@@ -4,71 +4,59 @@
 #include <iostream>
 
 Enemy_Integral::Enemy_Integral(SDL_Renderer *renderer, Player *player)
-    : BaseEnemy(renderer), target(player)
-{
-    // 初始化敵人的位置，隨機生成非左上角的位置
-    x = 200.0f; // 初始位置 X
-    y = 200.0f; // 初始位置 Y
+    : BaseEnemy(renderer), target(player) {
+    mPosX = 200.0f;  // 初始位置 X
+    mPosY = 200.0f;  // 初始位置 Y
+    mSpeed = 80.0f;  // 速度
+    mHP = 100;       // 血量
+    mDamage = 15;    // 攻擊力
+    mRadius = 25.0f; // 大小半徑
 
     // 加載圖片
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Integral.png");
     if (!Texture) {
-        std::cerr << "Failed to load EnemyFollow texture: " << IMG_GetError() << std::endl;
+        std::cerr << "Failed to load Enemy_Integral texture: " << IMG_GetError() << std::endl;
     }
 }
 
-Enemy_Integral::~Enemy_Integral()
-{
+Enemy_Integral::~Enemy_Integral() {
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
 }
 
-void Enemy_Integral::update(double deltaTime)
-{
-    if (!target) return; // 確保目標（玩家）存在
+void Enemy_Integral::update(double deltaTime) {
+    if (!target) return;
 
-    // 獲取玩家的位置
-    float targetX = target->getX();
-    float targetY = target->getY();
+    // 計算方向向量
+    float dx = target->getX() - mPosX;
+    float dy = target->getY() - mPosY;
 
-    // 計算敵人到玩家的方向向量
-    float dx = targetX - x;
-    float dy = targetY - y;
-
-    // 計算向量長度（距離）
     float distance = std::sqrt(dx * dx + dy * dy);
-
     if (distance > 0) {
-        // 正規化方向向量
         dx /= distance;
         dy /= distance;
 
-        // 每秒移動的速度（例如 100 單位/秒）
-        float speed = 80.0f;
-
-        // 根據方向向量和速度更新敵人位置
-        x += dx * speed * deltaTime;
-        y += dy * speed * deltaTime;
+        // 更新位置
+        mPosX += dx * mSpeed * deltaTime;
+        mPosY += dy * mSpeed * deltaTime;
     }
 }
 
-void Enemy_Integral::render(SDL_Renderer *renderer)
-{
+void Enemy_Integral::render(SDL_Renderer *renderer) {
     if (Texture) {
-        // 渲染圖片
-        SDL_Rect rect = {static_cast<int>(x), static_cast<int>(y), 50, 50}; // 調整大小（假設圖片為 50x50）
+        SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
+                         static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};
         SDL_RenderCopy(renderer, Texture, NULL, &rect);
     } else {
-        // 當圖片加載失敗時，使用圓形作為後備
-        int radius = 25;
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // 黃色
+        int radius = static_cast<int>(mRadius);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
         for (int w = 0; w < radius * 2; w++) {
             for (int h = 0; h < radius * 2; h++) {
-                int dx = radius - w; // 水平偏移
-                int dy = radius - h; // 垂直偏移
+                int dx = radius - w;
+                int dy = radius - h;
                 if ((dx * dx + dy * dy) <= (radius * radius)) {
-                    SDL_RenderDrawPoint(renderer, static_cast<int>(x) + dx, static_cast<int>(y) + dy);
+                    SDL_RenderDrawPoint(renderer, static_cast<int>(mPosX) + dx, static_cast<int>(mPosY) + dy);
                 }
             }
         }

@@ -4,96 +4,58 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <cmath>
 
-using namespace std;
-
-// Constructor
 Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
-    : BaseEnemy(renderer)
-{ // 正確初始化 BaseEnemy
-    // 初始化敵人特有的屬性
+    : BaseEnemy(renderer) {
     std::srand(static_cast<unsigned>(std::time(0)));
 
-    x = static_cast<float>(std::rand() % SCREEN_WIDTH);
-    y = static_cast<float>(std::rand() % SCREEN_HEIGHT);
+    mPosX = static_cast<float>(std::rand() % SCREEN_WIDTH);
+    mPosY = static_cast<float>(std::rand() % SCREEN_HEIGHT);
+    mSpeed = 1.0f;   // 初始速度
+    mHP = 120;       // 血量
+    mDamage = 10;    // 攻擊力
+    mRadius = 25.0f; // 大小半徑
 
-    float initialSpeed = static_cast<float>((std::rand() % 100) + 50) / 100.0f;
-    speedX = initialSpeed * ((std::rand() % 2 == 0) ? 1 : -1);
-    speedY = initialSpeed * ((std::rand() % 2 == 0) ? 1 : -1);
-
-    accelerationX = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
-    accelerationY = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
-
+    // 加載圖片
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Sum.png");
     if (!Texture) {
-        std::cout << "Failed to load texture: " << IMG_GetError() << std::endl;
+        std::cerr << "Failed to load Enemy_Sum texture: " << IMG_GetError() << std::endl;
     }
 }
 
-// Destructor
-Enemy_Sum::~Enemy_Sum()
-{
+Enemy_Sum::~Enemy_Sum() {
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
-    IMG_Quit();
 }
 
-// Update enemy position
-void Enemy_Sum::update(double deltaTime)
-{
-    // Apply acceleration to speed
-    speedX += accelerationX * deltaTime;
-    speedY += accelerationY * deltaTime;
+void Enemy_Sum::update(double deltaTime) {
+    mPosX += mSpeed * deltaTime * 100;
+    mPosY += mSpeed * deltaTime * 100;
 
-    float maxSpeed = 5.0f;  // Maximum allowable speed
-    // Manual clamp implementation
-    // Manual clamp implementation
-    speedX = (speedX < -maxSpeed) ? -maxSpeed : (speedX > maxSpeed ? maxSpeed : speedX);
-    speedY = (speedY < -maxSpeed) ? -maxSpeed : (speedY > maxSpeed ? maxSpeed : speedY);
-
-
-    // Update position based on the new speed
-    x += speedX * deltaTime * 100;
-    y += speedY * deltaTime * 100;
-
-    // Check for screen boundaries and adjust
-    if (x < 0) {
-        x = 0;
-        speedX = -speedX;  // Reverse direction
-    } else if (x > SCREEN_WIDTH - 50) {  // Assuming enemy width is 50
-        x = SCREEN_WIDTH - 50;
-        speedX = -speedX;
+    // 邊界檢查並反彈
+    if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
+        mSpeed = -mSpeed;
     }
-
-    if (y < 0) {
-        y = 0;
-        speedY = -speedY;  // Reverse direction
-    } else if (y > SCREEN_HEIGHT - 50) {  // Assuming enemy height is 50
-        y = SCREEN_HEIGHT - 50;
-        speedY = -speedY;
+    if (mPosY - mRadius < 0 || mPosY + mRadius > SCREEN_HEIGHT) {
+        mSpeed = -mSpeed;
     }
 }
 
-// Render the enemy
-void Enemy_Sum::render(SDL_Renderer *renderer)
-{
+void Enemy_Sum::render(SDL_Renderer *renderer) {
     if (Texture) {
-        // Render enemy texture
-        SDL_Rect Rect = {static_cast<int>(x), static_cast<int>(y), 50, 50};
-        SDL_RenderCopy(renderer, Texture, NULL, &Rect);
+        SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
+                         static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};
+        SDL_RenderCopy(renderer, Texture, NULL, &rect);
     } else {
-        // Render a yellow circle as fallback
-        int radius = 25;
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Yellow color
-
+        int radius = static_cast<int>(mRadius);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         for (int w = 0; w < radius * 2; w++) {
             for (int h = 0; h < radius * 2; h++) {
-                int dx = radius - w;  // horizontal offset
-                int dy = radius - h;  // vertical offset
+                int dx = radius - w;
+                int dy = radius - h;
                 if ((dx * dx + dy * dy) <= (radius * radius)) {
-                    SDL_RenderDrawPoint(renderer, static_cast<int>(x) + dx, static_cast<int>(y) + dy);
+                    SDL_RenderDrawPoint(renderer, static_cast<int>(mPosX) + dx, static_cast<int>(mPosY) + dy);
                 }
             }
         }

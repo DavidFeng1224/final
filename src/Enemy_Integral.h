@@ -2,17 +2,18 @@
 #define ENEMY_INTEGRAL_H
 
 #include "BaseEnemy.h"
-#include "Player.h" 
+#include "Player.h"
 
 class Enemy_Integral : public BaseEnemy {
 public:
     Enemy_Integral(SDL_Renderer *renderer, Player *player);
-    ~Enemy_Integral(); // 確保 destructor 已明確宣告
+    ~Enemy_Integral();
+
     void update(double deltaTime) override;
-    void render(SDL_Renderer* renderer) override; // 確保 render 已正確宣告
+    void render(SDL_Renderer* renderer) override;
 
 private:
-    Player* target;
+    Player* target; // 指向玩家的指標
 };
 
 #endif
