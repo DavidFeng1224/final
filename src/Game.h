@@ -3,8 +3,8 @@
 
 #include <vector>
 #include "BaseEnemy.h"
-#include "Enemy.h"
-#include "EnemyFollow.h"
+#include "Enemy_Sum.h"
+#include "Enemy_Integral.h"
 #include "Player.h"
 
 class Game {

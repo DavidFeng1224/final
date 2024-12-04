@@ -6,8 +6,8 @@
 #include <SDL2/SDL_image.h>
 #include "Game.h"
 #include "Global.h"
-#include "Enemy.h"
-#include "EnemyFollow.h"
+#include "Enemy_Sum.h"
+#include "Enemy_Integral.h"
 #include "Player.h"
 
 using namespace std;
@@ -34,13 +34,12 @@ Game::Game(SDL_Renderer* renderer)
 
     // Initialize random enemies
     for (int i = 0; i < 3; ++i) {
-        enemies.push_back(static_cast<BaseEnemy*>(new Enemy(renderer)));  // 確保轉換為 BaseEnemy 指針
-  
+        enemies.push_back(static_cast<BaseEnemy *>(new Enemy_Sum(renderer))); // 確保轉換為 BaseEnemy 指針
     }
 
     // Initialize chasing enemies
     for (int i = 0; i < 2; ++i) {
-        enemies.push_back(new EnemyFollow(renderer, &player));  // Add chasing enemy
+        enemies.push_back(new Enemy_Integral(renderer, &player));  // Add chasing enemy
     }
 }
 

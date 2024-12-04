@@ -1,28 +1,31 @@
-#include "EnemyFollow.h"
+#include "Enemy_Integral.h"
 #include <cmath>
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-EnemyFollow::EnemyFollow(SDL_Renderer* renderer, Player* player)
-    : BaseEnemy(renderer), target(player) {
+Enemy_Integral::Enemy_Integral(SDL_Renderer *renderer, Player *player)
+    : BaseEnemy(renderer), target(player)
+{
     // 初始化敵人的位置，隨機生成非左上角的位置
     x = 200.0f; // 初始位置 X
     y = 200.0f; // 初始位置 Y
 
     // 加載圖片
-    Texture = IMG_LoadTexture(renderer, "assets/images/EnemyFollow.png");
+    Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Integral.png");
     if (!Texture) {
         std::cerr << "Failed to load EnemyFollow texture: " << IMG_GetError() << std::endl;
     }
 }
 
-EnemyFollow::~EnemyFollow() {
+Enemy_Integral::~Enemy_Integral()
+{
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
 }
 
-void EnemyFollow::update(double deltaTime) {
+void Enemy_Integral::update(double deltaTime)
+{
     if (!target) return; // 確保目標（玩家）存在
 
     // 獲取玩家的位置
@@ -42,7 +45,7 @@ void EnemyFollow::update(double deltaTime) {
         dy /= distance;
 
         // 每秒移動的速度（例如 100 單位/秒）
-        float speed = 100.0f;
+        float speed = 80.0f;
 
         // 根據方向向量和速度更新敵人位置
         x += dx * speed * deltaTime;
@@ -50,7 +53,8 @@ void EnemyFollow::update(double deltaTime) {
     }
 }
 
-void EnemyFollow::render(SDL_Renderer* renderer) {
+void Enemy_Integral::render(SDL_Renderer *renderer)
+{
     if (Texture) {
         // 渲染圖片
         SDL_Rect rect = {static_cast<int>(x), static_cast<int>(y), 50, 50}; // 調整大小（假設圖片為 50x50）

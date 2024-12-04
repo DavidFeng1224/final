@@ -1,4 +1,4 @@
-#include "Enemy.h"
+#include "Enemy_Sum.h"
 #include "Global.h"
 #include <SDL2/SDL_image.h>
 #include <cstdlib>
@@ -9,8 +9,9 @@
 using namespace std;
 
 // Constructor
-Enemy::Enemy(SDL_Renderer* renderer)
-    : BaseEnemy(renderer) {  // 正確初始化 BaseEnemy
+Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
+    : BaseEnemy(renderer)
+{ // 正確初始化 BaseEnemy
     // 初始化敵人特有的屬性
     std::srand(static_cast<unsigned>(std::time(0)));
 
@@ -24,15 +25,15 @@ Enemy::Enemy(SDL_Renderer* renderer)
     accelerationX = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
     accelerationY = 0.1f * ((std::rand() % 2 == 0) ? 1 : -1);
 
-    Texture = IMG_LoadTexture(renderer, "assets/images/Enemy.png");
+    Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Sum.png");
     if (!Texture) {
         std::cout << "Failed to load texture: " << IMG_GetError() << std::endl;
     }
 }
 
-
 // Destructor
-Enemy::~Enemy() {
+Enemy_Sum::~Enemy_Sum()
+{
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
@@ -40,7 +41,8 @@ Enemy::~Enemy() {
 }
 
 // Update enemy position
-void Enemy::update(double deltaTime) {
+void Enemy_Sum::update(double deltaTime)
+{
     // Apply acceleration to speed
     speedX += accelerationX * deltaTime;
     speedY += accelerationY * deltaTime;
@@ -74,9 +76,9 @@ void Enemy::update(double deltaTime) {
     }
 }
 
-
 // Render the enemy
-void Enemy::render(SDL_Renderer* renderer) {
+void Enemy_Sum::render(SDL_Renderer *renderer)
+{
     if (Texture) {
         // Render enemy texture
         SDL_Rect Rect = {static_cast<int>(x), static_cast<int>(y), 50, 50};

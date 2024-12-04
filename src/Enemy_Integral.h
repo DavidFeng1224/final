@@ -1,13 +1,13 @@
-#ifndef ENEMYFOLLOW_H
-#define ENEMYFOLLOW_H
+#ifndef ENEMY_INTEGRAL_H
+#define ENEMY_INTEGRAL_H
 
 #include "BaseEnemy.h"
 #include "Player.h" 
 
-class EnemyFollow : public BaseEnemy {
+class Enemy_Integral : public BaseEnemy {
 public:
-    EnemyFollow(SDL_Renderer* renderer, Player* player);
-    ~EnemyFollow(); // 確保 destructor 已明確宣告
+    Enemy_Integral(SDL_Renderer *renderer, Player *player);
+    ~Enemy_Integral(); // 確保 destructor 已明確宣告
     void update(double deltaTime) override;
     void render(SDL_Renderer* renderer) override; // 確保 render 已正確宣告
 
