@@ -8,7 +8,7 @@ using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
     : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false) {}
+      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) {}
 
 void Player::handleEvent(SDL_Event& e) {
     if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
@@ -44,18 +44,19 @@ void Player::handleEvent(SDL_Event& e) {
 }
 
 void Player::update(double deltaTime) {
-    // 根據按鍵狀態來更新玩家的位置
+    // Update player's position
     if (mMoveUp) mPosY -= mSpeed * deltaTime;
     if (mMoveDown) mPosY += mSpeed * deltaTime;
     if (mMoveLeft) mPosX -= mSpeed * deltaTime;
     if (mMoveRight) mPosX += mSpeed * deltaTime;
 
-    // 邊界檢查，防止玩家超出螢幕範圍
+    // Constrain player within screen bounds
     if (mPosX - mRadius < 0) mPosX = mRadius;
     if (mPosX + mRadius > SCREEN_WIDTH) mPosX = SCREEN_WIDTH - mRadius;
     if (mPosY - mRadius < 0) mPosY = mRadius;
     if (mPosY + mRadius > SCREEN_HEIGHT) mPosY = SCREEN_HEIGHT - mRadius;
 
+    // Update bullets
     for (auto& bullet : bullets) {
         bullet.update(deltaTime);
     }
@@ -71,16 +72,17 @@ void Player::render(SDL_Renderer* renderer) {
     int centerY = static_cast<int>(mPosY);
     int radius = mRadius;
 
+    // Render bullets
     for (auto& bullet : bullets) {
         bullet.render(renderer);
     }
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // 玩家顏色設為紅色
-
+    // Render player as a circle
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Player color: red
     for (int w = -radius; w < radius; w++) {
         for (int h = -radius; h < radius; h++) {
             if (w * w + h * h <= radius * radius) {
-                SDL_RenderDrawPoint(renderer, centerX + w, centerY + h);  // 繪製圓形
+                SDL_RenderDrawPoint(renderer, centerX + w, centerY + h);
             }
         }
     }
@@ -92,10 +94,10 @@ void Player::fireBullet(int mouseX, int mouseY) {
     float dirY = mouseY - mPosY;
     float magnitude = std::sqrt(dirX * dirX + dirY * dirY);
 
-    // 防止方向向量長度為零
-    if (magnitude < 0.001f) return;  // 避免過小值
+    // Prevent zero-length direction vector
+    if (magnitude < 0.001f) return;
 
-    // Normalize direction vector and set bullet speed
+    // Normalize direction and set bullet speed
     dirX /= magnitude;
     dirY /= magnitude;
     float bulletSpeed = 300.0f;  // Example bullet speed
@@ -103,4 +105,3 @@ void Player::fireBullet(int mouseX, int mouseY) {
     // Add a new bullet to the vector
     bullets.emplace_back(mPosX, mPosY, dirX, dirY, bulletSpeed);
 }
-

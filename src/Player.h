@@ -1,9 +1,10 @@
+// 
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
-#include <vector> // 用於存放子彈
-#include "Bullet.h" // 包含 Bullet 的定義
+#include <vector> // For storing bullets
+#include "Bullet.h" // Include Bullet definition
 
 class Player {
 public:
@@ -15,14 +16,19 @@ public:
 
     float getX() const { return mPosX; }
     float getY() const { return mPosY; }
+    float getRadius() const { return mRadius; }
+    void takeDamage(int damage) { mHP -= damage; if (mHP < 0) mHP = 0; }
+    int getHP() const { return mHP; }
+    // Add this method to access the bullets
+    std::vector<Bullet>& getBullets() { return bullets; } // Non-const version
 
 private:
     double mSpeed;
-    double mPosX, mPosY; // 玩家當前的位置
+    double mPosX, mPosY; // Player's current position
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
-
-    std::vector<Bullet> bullets; // 用於存放子彈的容器
+    int mHP;  // 玩家生命值
+    std::vector<Bullet> bullets; // Container for bullets
 };
 
 #endif

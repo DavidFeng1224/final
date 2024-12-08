@@ -20,6 +20,9 @@ public:
     void handleEvent(SDL_Event& e);
     void render(SDL_Renderer* renderer);
     void update(double deltaTime);
+    bool checkCollision(const Bullet& bullet, const BaseEnemy& enemy) const;
+    bool checkPlayerCollision(const Player& player, const BaseEnemy& enemy) const;
+
 };
 
 #endif

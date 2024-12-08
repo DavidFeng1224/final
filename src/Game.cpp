@@ -1,3 +1,5 @@
+// 
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,10 +11,12 @@
 #include "Enemy_Sum.h"
 #include "Enemy_Integral.h"
 #include "Player.h"
+#include "BaseEnemy.h"
 
 using namespace std;
 
-Game::Game(SDL_Renderer* renderer) 
+// Constructor
+Game::Game(SDL_Renderer* renderer)
     : player(renderer, 100) {
     // Initialize SDL_ttf
     if (TTF_Init() == -1) {
@@ -34,15 +38,16 @@ Game::Game(SDL_Renderer* renderer)
 
     // Initialize random enemies
     for (int i = 0; i < 3; ++i) {
-        enemies.push_back(static_cast<BaseEnemy *>(new Enemy_Sum(renderer))); // 確保轉換為 BaseEnemy 指針
+        enemies.push_back(new Enemy_Sum(renderer));
     }
 
     // Initialize chasing enemies
     for (int i = 0; i < 2; ++i) {
-        enemies.push_back(new Enemy_Integral(renderer, &player));  // Add chasing enemy
+        enemies.push_back(new Enemy_Integral(renderer, &player));
     }
 }
 
+// Destructor
 Game::~Game() {
     // Clean up dynamically allocated enemies
     for (BaseEnemy* enemy : enemies) {
@@ -53,12 +58,14 @@ Game::~Game() {
     // Destroy background texture
     if (backgroundTexture) {
         SDL_DestroyTexture(backgroundTexture);
+        backgroundTexture = nullptr;
     }
 
     TTF_Quit();
     IMG_Quit();
 }
 
+// Handle player and game events
 void Game::handleEvent(SDL_Event& e) {
     if (e.type == SDL_QUIT) {
         extern Gamemode gamemode;
@@ -77,15 +84,66 @@ void Game::handleEvent(SDL_Event& e) {
     player.handleEvent(e);
 }
 
+// Update game logic
 void Game::update(double deltaTime) {
+    // 更新玩家
     player.update(deltaTime);
 
-    // Update all enemies
+    // 更新所有敵人
     for (BaseEnemy* enemy : enemies) {
-        enemy->update(deltaTime);
+        if (enemy->isAlive()) {
+            enemy->update(deltaTime);
+        }
     }
+
+    // 檢查子彈與敵人的碰撞
+    for (BaseEnemy* enemy : enemies) {
+        for (auto& bullet : player.getBullets()) {
+            if (enemy->isAlive() && bullet.isActive() &&
+                checkCollision(bullet, *enemy)) {
+                bullet.deactivate();
+                enemy->takeDamage(50);  // 假設子彈造成 50 傷害
+            }
+        }
+    }
+
+    // 檢查玩家與敵人的碰撞
+    for (BaseEnemy* enemy : enemies) {
+        if (enemy->isAlive() && checkPlayerCollision(player, *enemy)) {
+            // 假設玩家失去一定血量或遊戲結束邏輯
+            player.takeDamage(20);//假設扣20滴血
+            if (player.getHP() <= 0){
+                cout << "Player died. Game over." << endl;
+            }
+            cout << "Player collided with enemy!" << endl;
+            // 玩家受傷或觸發其他事件
+        }
+
+
+    }
+
+    // 移除已死亡的敵人
+    enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+                                 [](BaseEnemy* enemy) {
+                                     if (!enemy->isAlive()) {
+                                         delete enemy;  // 清除記憶體
+                                         return true;
+                                     }
+                                     return false;
+                                 }),
+                  enemies.end());
 }
 
+bool Game::checkPlayerCollision(const Player& player, const BaseEnemy& enemy) const {
+    float dx = player.getX() - enemy.getX();
+    float dy = player.getY() - enemy.getY();
+    float distanceSquared = dx * dx + dy * dy;
+    float radiusSum = player.getRadius() + enemy.getRadius();
+    return distanceSquared <= radiusSum * radiusSum;
+}
+
+
+// Render game elements
 void Game::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 204, 204, 204, 255);  // Background color
     SDL_RenderClear(renderer);
@@ -100,6 +158,18 @@ void Game::render(SDL_Renderer* renderer) {
 
     // Render all enemies
     for (BaseEnemy* enemy : enemies) {
-        enemy->render(renderer);
+        if (enemy->isAlive()) {
+            enemy->render(renderer);
+        }
     }
 }
+
+// Helper function to check collision between a bullet and an enemy
+bool Game::checkCollision(const Bullet& bullet, const BaseEnemy& enemy) const {
+    float dx = bullet.getX() - enemy.getX();
+    float dy = bullet.getY() - enemy.getY();
+    float distanceSquared = dx * dx + dy * dy;
+    float radiusSum = bullet.getRadius() + enemy.getRadius();
+    return distanceSquared <= radiusSum * radiusSum;
+}
+
