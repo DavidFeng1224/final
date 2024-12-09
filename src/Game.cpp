@@ -103,6 +103,7 @@ void Game::update(double deltaTime) {
                 checkCollision(bullet, *enemy)) {
                 bullet.deactivate();
                 enemy->takeDamage(50);  // 假設子彈造成 50 傷害
+                applyKnockback(enemy, bullet);
             }
         }
     }
@@ -110,6 +111,38 @@ void Game::update(double deltaTime) {
     // 檢查玩家與敵人的碰撞
     for (BaseEnemy* enemy : enemies) {
         if (enemy->isAlive() && checkPlayerCollision(player, *enemy)) {
+            float dx = player.getX() - enemy->getX();
+            float dy = player.getY() - enemy->getY();
+            float distance = std::sqrt(dx * dx + dy * dy);
+
+            // 避免除以零
+            if (distance == 0.0f) {
+                dx = 1.0f;
+                dy = 0.0f;
+                distance = 1.0f;
+            }
+
+            // 將方向單位化
+            dx /= distance;
+            dy /= distance;
+
+            // 設定反彈距離，假設為 10 像素
+            float bounceDistance = 10.0f;
+            player.setPosition(
+                player.getX() + dx * bounceDistance,
+                player.getY() + dy * bounceDistance
+            );
+
+            // Move enemy in opposite direction
+            enemy->setPosition(
+                enemy->getX() - dx * bounceDistance,
+                enemy->getY() - dy * bounceDistance
+            );
+
+            // 顯示碰撞事件
+            cout << "Player collided with enemy and bounced!" << endl;
+        
+
             // 假設玩家失去一定血量或遊戲結束邏輯
             player.takeDamage(20);//假設扣20滴血
             if (player.getHP() <= 0){
@@ -120,6 +153,16 @@ void Game::update(double deltaTime) {
         }
 
 
+    }
+
+    // Check collisions and resolve overlaps between enemies
+    for (size_t i = 0; i < enemies.size(); ++i) {
+        for (size_t j = i + 1; j < enemies.size(); ++j) {
+            if (enemies[i]->isAlive() && enemies[j]->isAlive() &&
+                checkEnemyCollision(*enemies[i], *enemies[j])) {
+                resolveEnemyOverlap(enemies[i], enemies[j]);
+            }
+        }
     }
 
     // 移除已死亡的敵人
@@ -142,6 +185,72 @@ bool Game::checkPlayerCollision(const Player& player, const BaseEnemy& enemy) co
     return distanceSquared <= radiusSum * radiusSum;
 }
 
+bool Game::checkEnemyCollision(const BaseEnemy& enemy1, const BaseEnemy& enemy2) const {
+    float dx = enemy1.getX() - enemy2.getX();
+    float dy = enemy1.getY() - enemy2.getY();
+    float distanceSquared = dx * dx + dy * dy;
+    float radiusSum = enemy1.getRadius() + enemy2.getRadius();
+    return distanceSquared < radiusSum * radiusSum;
+}
+
+
+void Game::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
+    float dx = enemy1->getX() - enemy2->getX();
+    float dy = enemy1->getY() - enemy2->getY();
+    float distance = std::sqrt(dx * dx + dy * dy);
+
+    // Avoid division by zero
+    if (distance == 0.0f) {
+        dx = 1.0f;
+        dy = 0.0f;
+        distance = 1.0f;
+    }
+
+    float radiusSum = enemy1->getRadius() + enemy2->getRadius();
+    float overlap = radiusSum - distance;
+
+    // Proportionally move the enemies apart
+    float moveFactor = overlap / 2.0f;
+    dx /= distance; // Normalize the direction vector
+    dy /= distance;
+
+    // Move each enemy away from the center of collision
+    enemy1->setPosition(
+        enemy1->getX() + dx * moveFactor,
+        enemy1->getY() + dy * moveFactor
+    );
+
+    enemy2->setPosition(
+        enemy2->getX() - dx * moveFactor,
+        enemy2->getY() - dy * moveFactor
+    );
+}
+
+void Game::applyKnockback(BaseEnemy* enemy, const Bullet& bullet) {
+    float dx = enemy->getX() - bullet.getX();
+    float dy = enemy->getY() - bullet.getY();
+    float distance = std::sqrt(dx * dx + dy * dy);
+
+    // Avoid division by zero
+    if (distance == 0.0f) {
+        dx = 1.0f;
+        dy = 0.0f;
+        distance = 1.0f;
+    }
+
+    // Normalize the direction vector
+    dx /= distance;
+    dy /= distance;
+
+    // Set knockback distance
+    float knockbackDistance = 15.0f;
+
+    // Apply knockback to the enemy
+    enemy->setPosition(
+        enemy->getX() + dx * knockbackDistance,
+        enemy->getY() + dy * knockbackDistance
+    );
+}
 
 // Render game elements
 void Game::render(SDL_Renderer* renderer) {

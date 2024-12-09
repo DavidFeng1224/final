@@ -1,4 +1,7 @@
 #include "BaseEnemy.h"
+#include "Global.h"
+#include <iostream>
+using namespace std;
 
 BaseEnemy::BaseEnemy(SDL_Renderer* renderer)
     : mPosX(0), mPosY(0), mSpeed(0), mHP(100), mDamage(10), mRadius(25),
@@ -10,6 +13,11 @@ void BaseEnemy::takeDamage(int damage) {
     mHP -= damage;
     if (mHP < 0) mHP = 0;
     mHealthBar.setHealth(mHP, 100); // 更新血條
+}
+
+void BaseEnemy::setPosition(float x, float y) {
+    mPosX = std::clamp(x, static_cast<float>(mRadius), static_cast<float>(SCREEN_WIDTH - mRadius));
+    mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
 }
 
 bool BaseEnemy::isAlive() const {

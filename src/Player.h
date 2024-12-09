@@ -13,7 +13,7 @@ public:
     void update(double deltaTime);
     void render(SDL_Renderer* renderer);
     void fireBullet(int mouseX, int mouseY);
-
+    void setPosition(float x, float y); // Declare setPosition method
     float getX() const { return mPosX; }
     float getY() const { return mPosY; }
     float getRadius() const { return mRadius; }

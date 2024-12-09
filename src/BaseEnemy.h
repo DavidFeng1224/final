@@ -30,6 +30,7 @@ public:
 
     void takeDamage(int damage); // Reduce health
     bool isAlive() const;        // Check if alive
+    void setPosition(float x, float y); // Set enemy position
 };
 
 #endif

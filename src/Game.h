@@ -22,6 +22,9 @@ public:
     void update(double deltaTime);
     bool checkCollision(const Bullet& bullet, const BaseEnemy& enemy) const;
     bool checkPlayerCollision(const Player& player, const BaseEnemy& enemy) const;
+    bool checkEnemyCollision(const BaseEnemy& enemy1, const BaseEnemy& enemy2) const;
+    void resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2);
+    void applyKnockback(BaseEnemy* enemy, const Bullet& bullet);
 
 };
 

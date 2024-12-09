@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++11 -I./src/include
+CXXFLAGS = -std=c++17 -I./src/include
 LDFLAGS = -L./src/lib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 # Directories

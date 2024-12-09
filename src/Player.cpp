@@ -42,6 +42,12 @@ void Player::handleEvent(SDL_Event& e) {
         fireBullet(mouseX, mouseY);  // Fire bullet towards the mouse position
     }
 }
+void Player::setPosition(float x, float y) {
+    // mPosX = x;
+    // mPosY = y;
+    mPosX = std::clamp(x, static_cast<float>(mRadius), static_cast<float>(SCREEN_WIDTH - mRadius));
+    mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
+}
 
 void Player::update(double deltaTime) {
     // Update player's position
