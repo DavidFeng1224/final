@@ -9,9 +9,15 @@
 
 class Game {
 private:
-    std::vector<BaseEnemy*> enemies;  // Use BaseEnemy* for polymorphism
+    std::vector<BaseEnemy*> enemies;  // 敵人列表
     Player player;
     SDL_Texture* backgroundTexture = nullptr;
+    Uint32 startTime;
+    Uint32 lastSpawnTime;
+    SDL_Renderer* mRenderer;
+
+    void spawnEnemies(Uint32 elapsedTime); // 生成敵人
+    void resolvePlayerEnemyCollision(BaseEnemy* enemy); // 處理玩家與敵人的碰撞
 
 public:
     Game(SDL_Renderer* renderer);
@@ -24,8 +30,6 @@ public:
     bool checkPlayerCollision(const Player& player, const BaseEnemy& enemy) const;
     bool checkEnemyCollision(const BaseEnemy& enemy1, const BaseEnemy& enemy2) const;
     void resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2);
-    void applyKnockback(BaseEnemy* enemy, const Bullet& bullet);
-
 };
 
 #endif
