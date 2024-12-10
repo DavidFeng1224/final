@@ -14,6 +14,21 @@ BaseEnemy::BaseEnemy(SDL_Renderer* renderer, float speed)
     mHealthBar.setHealth(mHP, 100);
 }
 
+// 獲取 X 座標
+float BaseEnemy::getX() const {
+    return mPosX;
+}
+
+// 獲取 Y 座標
+float BaseEnemy::getY() const {
+    return mPosY;
+}
+
+// 獲取半徑
+float BaseEnemy::getRadius() const {
+    return mRadius;
+}
+
 // 設置速度
 void BaseEnemy::setSpeed(float speed) {
     mSpeed = speed;
