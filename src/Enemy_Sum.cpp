@@ -43,6 +43,7 @@ void Enemy_Sum::update(double deltaTime) {
 }
 
 void Enemy_Sum::render(SDL_Renderer *renderer) {
+    BaseEnemy::render(renderer); 
     if (Texture) {
         SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
                          static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};

@@ -44,6 +44,7 @@ void Enemy_Integral::update(double deltaTime) {
 }
 
 void Enemy_Integral::render(SDL_Renderer *renderer) {
+    BaseEnemy::render(renderer); // 調用基類的渲染邏輯
     if (Texture) {
         SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
                          static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};

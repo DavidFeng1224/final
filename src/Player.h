@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <vector> // For storing bullets
 #include "Bullet.h" // Include Bullet definition
+#include "HealthBar.h"
 
 class Player {
 public:
@@ -17,7 +18,7 @@ public:
     float getX() const { return mPosX; }
     float getY() const { return mPosY; }
     float getRadius() const { return mRadius; }
-    void takeDamage(int damage) { mHP -= damage; if (mHP < 0) mHP = 0; }
+    void takeDamage(int damage); 
     int getHP() const { return mHP; }
     // Add this method to access the bullets
     std::vector<Bullet>& getBullets() { return bullets; } // Non-const version
@@ -28,7 +29,9 @@ private:
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
     int mHP;  // 玩家生命值
+    HealthBar mHealthBar; // 添加血條
     std::vector<Bullet> bullets; // Container for bullets
+
 };
 
 #endif

@@ -8,7 +8,16 @@ using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
     : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) {}
+      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(50, 5) { // 初始化血條
+    mHealthBar.setHealth(mHP, 100); // 設定初始血量
+}
+
+
+void Player::takeDamage(int damage) {
+    mHP -= damage;
+    if (mHP < 0) mHP = 0;
+    mHealthBar.setHealth(mHP, 100); // 更新血條
+}
 
 void Player::handleEvent(SDL_Event& e) {
     if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
@@ -92,6 +101,11 @@ void Player::render(SDL_Renderer* renderer) {
             }
         }
     }
+    // 更新血條位置並渲染
+    int healthBarX = static_cast<int>(mPosX - mRadius);
+    int healthBarY = static_cast<int>(mPosY - mRadius - 10);
+    mHealthBar.updatePosition(healthBarX, healthBarY);
+    mHealthBar.render(renderer);
 }
 
 void Player::fireBullet(int mouseX, int mouseY) {

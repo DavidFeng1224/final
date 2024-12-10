@@ -97,16 +97,17 @@ void Game::update(double deltaTime) {
     }
 
     // 檢查子彈與敵人的碰撞
-    for (BaseEnemy* enemy : enemies) {
-        for (auto& bullet : player.getBullets()) {
-            if (enemy->isAlive() && bullet.isActive() &&
-                checkCollision(bullet, *enemy)) {
-                bullet.deactivate();
-                enemy->takeDamage(50);  // 假設子彈造成 50 傷害
-                applyKnockback(enemy, bullet);
-            }
+   for (BaseEnemy* enemy : enemies) {
+    for (auto& bullet : player.getBullets()) {
+        if (enemy->isAlive() && bullet.isActive() &&
+            checkCollision(bullet, *enemy)) {
+            bullet.deactivate();
+            int damage = 50; // 假設子彈造成50傷害
+            enemy->takeDamage(damage);
         }
     }
+}
+
 
     // 檢查玩家與敵人的碰撞
     for (BaseEnemy* enemy : enemies) {
