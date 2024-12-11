@@ -175,7 +175,7 @@ void Game::spawnEnemies(Uint32 elapsedTime) {
     const float minDistance = 200.0f; // 與玩家的最小距離
 
     int numEnemySum = (elapsedTime < 20) ? 3 : 10; // 20 秒內每批生成 3 個，之後生成 10 個
-    int numEnemyIntegral = (elapsedTime < 20) ? 2 : 5; // 20 秒內每批生成 2 個，之後生成 5 個
+    int numEnemyIntegral = (elapsedTime < 20) ? 5 : 10; // 20 秒內每批生成 5 個，之後生成 10 個
 
     for (int i = 0; i < numEnemySum; ++i) {
         float x, y;

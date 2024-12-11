@@ -7,7 +7,7 @@ Enemy_Integral::Enemy_Integral(SDL_Renderer *renderer, Player *player)
     : BaseEnemy(renderer), target(player) {
     mPosX = 200.0f;  // 初始位置 X
     mPosY = 200.0f;  // 初始位置 Y
-    mSpeed = 80.0f;  // 速度
+    mSpeed = 100.0f;  // 速度
     mHP = 100;       // 血量
     mDamage = 15;    // 攻擊力
     mRadius = 25.0f; // 大小半徑
