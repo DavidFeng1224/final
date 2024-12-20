@@ -212,8 +212,7 @@ void Game::spawnEnemies(Uint32 elapsedTime) {
     }
 
 
-    cout << "Generated " << numEnemySum << " Enemy_Sum and " << numEnemyIntegral
-         << " Enemy_Integral at " << elapsedTime << " seconds." << endl;
+    // cout << "Generated " << numEnemySum << " Enemy_Sum and " << numEnemyIntegral << " Enemy_Integral at " << elapsedTime << " seconds." << endl;
 }
 
 // Check collision between a bullet and an enemy
@@ -276,5 +275,5 @@ void Game::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
 // Resolve collision between player and an enemy
 void Game::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
     player.takeDamage(20); // 玩家受傷
-    cout << "Player collided with enemy and took damage!" << endl;
+    // cout << "Player collided with enemy and took damage!" << endl;
 }

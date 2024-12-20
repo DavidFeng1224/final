@@ -91,17 +91,18 @@ int main(int argc, char* args[]) {
             }
         }
 
-        game.update(deltaTime);  // 使用deltaTime來更新遊戲
 
         SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
         SDL_RenderClear(gRenderer);
 
         switch (gamemode) {
             case MENU:
+                menu.update(deltaTime);  // 使用deltaTime來更新遊戲
                 menu.render(gRenderer);
                 break;
 
             case INGAME:
+                game.update(deltaTime);  // 使用deltaTime來更新遊戲
                 game.render(gRenderer);  // 渲染遊戲
                 break;
 

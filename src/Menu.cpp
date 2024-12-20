@@ -6,8 +6,9 @@
 
 using namespace std;
 
-Menu::Menu(SDL_Renderer* renderer) {
-    // 初始化SDL_ttf
+Menu::Menu(SDL_Renderer* renderer) 
+     : scaleFactor(1.0f), scaleSpeed(0.2f), isScalingUp(true){
+
     if (TTF_Init() == -1) {
         cout << "Failed to initialize SDL_ttf: " << TTF_GetError() << endl;
         return;
@@ -22,8 +23,9 @@ Menu::Menu(SDL_Renderer* renderer) {
     playButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_PLAY.png");
     howToPlayButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_HOWTOPLAY.png");
     exitButtonTexture = IMG_LoadTexture(renderer, "assets/images/Button_EXIT.png");
+    titleTexture = IMG_LoadTexture(renderer, "assets/images/Menu_Title.png");
 
-    if (!backgroundTexture || !playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture) {
+    if (!backgroundTexture || !playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture || !titleTexture) {
         cout << "Failed to load images: " << IMG_GetError() << endl;
     }
 
@@ -82,6 +84,29 @@ void Menu::handleEvent(SDL_Event& e) {
     }
 }
 
+void Menu::update(float deltaTime) {
+    // 更新標題縮放邏輯
+    if (isScalingUp) {
+        scaleFactor += scaleSpeed * deltaTime;
+        if (scaleFactor >= 1.2f) {
+            scaleFactor = 1.2f;
+            isScalingUp = false;
+        }
+    } else {
+        scaleFactor -= scaleSpeed * deltaTime;
+        if (scaleFactor <= 1.0f) {
+            scaleFactor = 1.0f;
+            isScalingUp = true;
+        }
+    }
+
+    // 更新標題位置和大小
+    titleRect.w = static_cast<int>(382 * scaleFactor);
+    titleRect.h = static_cast<int>(150 * scaleFactor);
+    titleRect.x = SCREEN_WIDTH / 2 - titleRect.w / 2;
+    titleRect.y = 50;
+}
+
 // 渲染菜單畫面（背景和按鈕）
 void Menu::render(SDL_Renderer* renderer) {
     // 設定背景顏色
@@ -126,6 +151,10 @@ void Menu::render(SDL_Renderer* renderer) {
             SDL_Rect exitButtonRect = {300, 480, 200, 75};
             SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
         }
+    }
+
+    if (titleTexture) {
+        SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
     }
 
     SDL_RenderPresent(renderer);  // 更新顯示
