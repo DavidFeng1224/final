@@ -15,41 +15,29 @@ BaseEnemy::BaseEnemy(SDL_Renderer* renderer, float speed)
 }
 
 // 獲取 X 座標
-float BaseEnemy::getX() const {
-    return mPosX;
-}
+float BaseEnemy::getX() const { return mPosX; }
 
 // 獲取 Y 座標
-float BaseEnemy::getY() const {
-    return mPosY;
-}
+float BaseEnemy::getY() const { return mPosY; }
 
 // 獲取半徑
-float BaseEnemy::getRadius() const {
-    return mRadius;
-}
-
-// 設置速度
-void BaseEnemy::setSpeed(float speed) {
-    mSpeed = speed;
-}
+float BaseEnemy::getRadius() const { return mRadius; }
 
 // 獲取速度
-float BaseEnemy::getSpeed() const {
-    return mSpeed;
-}
+float BaseEnemy::getSpeed() const { return mSpeed; }
+
+// 設置速度
+void BaseEnemy::setSpeed(float speed) { mSpeed = speed; }
 
 // 減少敵人血量
 void BaseEnemy::takeDamage(int damage) {
     mHP -= damage;
     if (mHP < 0) mHP = 0;
-    mHealthBar.setHealth(mHP, 100); // 更新血條
+    mHealthBar.setHealth(mHP, 100);
 }
 
 // 檢查敵人是否存活
-bool BaseEnemy::isAlive() const {
-    return mHP > 0;
-}
+bool BaseEnemy::isAlive() const { return mHP > 0; }
 
 // 設置敵人位置
 void BaseEnemy::setPosition(float x, float y) {

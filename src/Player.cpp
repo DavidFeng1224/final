@@ -26,15 +26,15 @@ void Player::handleEvent(SDL_Event& e) {
         switch (e.key.keysym.sym) {
             case SDLK_UP:
             case SDLK_w:
-                mMoveUp = keyState;  // 記錄UP鍵的狀態
+                mMoveUp = keyState;     // 記錄UP鍵的狀態
                 break;
             case SDLK_DOWN:
             case SDLK_s:
-                mMoveDown = keyState;  // 記錄DOWN鍵的狀態
+                mMoveDown = keyState;   // 記錄DOWN鍵的狀態
                 break;
             case SDLK_LEFT:
             case SDLK_a:
-                mMoveLeft = keyState;  // 記錄LEFT鍵的狀態
+                mMoveLeft = keyState;   // 記錄LEFT鍵的狀態
                 break;
             case SDLK_RIGHT:
             case SDLK_d:

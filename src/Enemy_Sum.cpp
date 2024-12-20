@@ -1,12 +1,8 @@
 #include "Enemy_Sum.h"
-#include <cmath> // 提供數學運算函數，如 sqrt
+#include <cmath>
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-/**
- * @brief 構造函數。
- * 初始化敵人的速度、位置、材質和血條。
- */
 Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
     : BaseEnemy(renderer), mSpeedX(100.0f), mSpeedY(100.0f) {
     // 初始化隨機位置
@@ -27,21 +23,12 @@ Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
     }
 }
 
-/**
- * @brief 析構函數。
- * 清理材質資源。
- */
 Enemy_Sum::~Enemy_Sum() {
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
 }
 
-/**
- * @brief 更新敵人的狀態，包括移動和處理與其他敵人的碰撞。
- * @param deltaTime 每一幀的時間間隔。
- * @param otherEnemies 其他敵人的列表。
- */
 void Enemy_Sum::update(double deltaTime, const std::vector<BaseEnemy*>& otherEnemies) {
     // 更新位置
     mPosX += mSpeedX * deltaTime;

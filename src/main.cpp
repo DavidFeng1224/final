@@ -6,8 +6,6 @@
 #include "Instruction.h"
 #include "Global.h"
 
-
-
 Gamemode gamemode = MENU;
 
 using namespace std;

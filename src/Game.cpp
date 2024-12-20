@@ -138,14 +138,13 @@ void Game::update(double deltaTime) {
 
     // 移除已死亡的敵人
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-                                 [](BaseEnemy* enemy) {
-                                     if (!enemy->isAlive()) {
-                                         delete enemy;  // 釋放記憶體
-                                         return true;
-                                     }
-                                     return false;
-                                 }),
-                  enemies.end());
+                                [](BaseEnemy* enemy) {
+                                    if (!enemy->isAlive()) {
+                                        delete enemy;  // 釋放記憶體
+                                        return true;
+                                    }
+                                    return false;
+                                }),enemies.end());
 }
 
 // Render all game elements
@@ -175,9 +174,9 @@ void Game::render(SDL_Renderer* renderer) {
 void Game::spawnEnemies(Uint32 elapsedTime) {
     const float minDistance = 200.0f; // 與玩家的最小距離
 
-    int numEnemySum = (elapsedTime < 20) ? 3 : 10; // 20 秒內每批生成 3 個，之後生成 10 個
-    int numEnemyIntegral = (elapsedTime < 20) ? 5 : 10; // 20 秒內每批生成 5 個，之後生成 10 個
-    int numEnemyANDGate = (elapsedTime < 20) ? 10 : 10; // 20 秒內每批生成 10 個，之後生成 10 個
+    int numEnemySum = (elapsedTime < 20) ? 3 : 4;      // 20 秒內每批生成 3 個，之後生成 4 個
+    int numEnemyIntegral = (elapsedTime < 20) ? 3 : 5; // 20 秒內每批生成 3 個，之後生成 5 個
+    int numEnemyANDGate = (elapsedTime < 20) ? 2 : 5;  // 20 秒內每批生成 2 個，之後生成 5 個
 
     for (int i = 0; i < numEnemySum; ++i) {
         float x, y;
@@ -210,7 +209,6 @@ void Game::spawnEnemies(Uint32 elapsedTime) {
     enemies.push_back(new Enemy_ANDGate(mRenderer));
     enemies.back()->setPosition(x, y);
     }
-
 
     // cout << "Generated " << numEnemySum << " Enemy_Sum and " << numEnemyIntegral << " Enemy_Integral at " << elapsedTime << " seconds." << endl;
 }
@@ -274,6 +272,6 @@ void Game::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
 
 // Resolve collision between player and an enemy
 void Game::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
-    player.takeDamage(20); // 玩家受傷
+    player.takeDamage(2); // 玩家受傷
     // cout << "Player collided with enemy and took damage!" << endl;
 }
