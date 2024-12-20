@@ -25,6 +25,7 @@ private:
     TTF_Font* font;
     SDL_Texture* backgroundTexture;
     SDL_Texture* Player_Diologue_Texture;
+    SDL_Texture* Professor_Diologue_Texture;
     vector<string> dialogue;
     vector<string> wrappedText;  // 儲存每行的文本
     size_t currentLine;

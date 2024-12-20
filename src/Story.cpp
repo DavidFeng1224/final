@@ -6,24 +6,29 @@ using namespace std;
 
 Story::Story(SDL_Renderer* renderer)
     : mRenderer(renderer), currentLine(0) {
-    font = TTF_OpenFont("assets/fonts/SuperPixel.ttf", 18);
+    font = TTF_OpenFont("assets/fonts/Ubuntu-Medium.ttf", 24);
 
     backgroundTexture = IMG_LoadTexture(mRenderer, "assets/images/Darker_Background_Grass.png");
     Player_Diologue_Texture = IMG_LoadTexture(mRenderer, "assets/images/Player_Dialogue.png");
+    Professor_Diologue_Texture = IMG_LoadTexture(mRenderer, "assets/images/Professor_Dialogue.png");
     if (backgroundTexture == nullptr) {
         cerr << "Failed to load background texture: " << IMG_GetError() << endl;
     }
 
-    dialogue.push_back("Welcome to the world of Course Conqueror! This is a game where you will need to conquer various courses.");
-    dialogue.push_back("In this world, you will defeat enemies from your courses, and each enemy represents a challenge.");
-    dialogue.push_back("Get ready for the first challenge, and may you succeed in your journey!");
+    dialogue.push_back("Welcome to NTUEE!");
+    dialogue.push_back("YAYYY!!!");
+    dialogue.push_back("Don't get too excited just yet; there's still a lot ahead of you.");
+    dialogue.push_back("What do you mean?");
+    dialogue.push_back("Try to survive this year! Don't get drowned in the ocean of knowledge.");
+    dialogue.push_back("(Hears a rumbling sound nearby)");
 
-    wrapText(dialogue[currentLine], SCREEN_WIDTH - 100);  // 初始對話換行處理
+    wrapText(dialogue[currentLine], SCREEN_WIDTH - 400);  // 初始對話換行處理
 }
 
 Story::~Story() {
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(Player_Diologue_Texture);
+    SDL_DestroyTexture(Professor_Diologue_Texture);
     TTF_CloseFont(font);
 }
 
@@ -34,7 +39,7 @@ void Story::handleEvent(SDL_Event& e) {
             extern Gamemode gamemode;
             gamemode = INGAME;
         } else {
-            wrapText(dialogue[currentLine], SCREEN_WIDTH - 100);  // 更新對話的換行
+            wrapText(dialogue[currentLine], SCREEN_WIDTH - 400);  // 更新對話的換行
         }
     }
 }
@@ -46,23 +51,42 @@ void Story::update(double deltaTime) {
 void Story::render(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
 
-    if (Player_Diologue_Texture) {
-        SDL_Rect Player_Diologue_Rect = {100, 200, 600, 300};
-        SDL_RenderCopy(renderer, Player_Diologue_Texture, NULL, &Player_Diologue_Rect);
-    }
-
-    if (font != nullptr) {
-        int yOffset = SCREEN_HEIGHT - 300;  // 將對話框的位置往上調整
-        for (const string& line : wrappedText) {
-            SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {0, 0, 0});  // 黑色字體
-            SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-            SDL_Rect textRect = { 60, yOffset, textSurface->w, textSurface->h };
-            SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-            yOffset += textSurface->h;  // 增加y偏移量以顯示下一行
-            SDL_FreeSurface(textSurface);
-            SDL_DestroyTexture(textTexture);
+    if(currentLine % 2 == 1){
+        if (Player_Diologue_Texture) {
+            SDL_Rect Player_Diologue_Rect = {100, 200, 600, 300};
+            SDL_RenderCopy(renderer, Player_Diologue_Texture, NULL, &Player_Diologue_Rect);
+        }
+        if (font != nullptr) {
+            int yOffset = SCREEN_HEIGHT - 210;  // 將對話框的位置往上調整
+            for (const string& line : wrappedText) {
+                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {184, 61, 186});  // 黑色字體
+                SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+                SDL_Rect textRect = { 240, yOffset, textSurface->w, textSurface->h };
+                SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+                yOffset += textSurface->h;  // 增加y偏移量以顯示下一行
+                SDL_FreeSurface(textSurface);
+                SDL_DestroyTexture(textTexture);
+            }
+        }
+    }else{
+        if (Professor_Diologue_Texture) {
+            SDL_Rect Professor_Diologue_Rect = {100, 200, 600, 300};
+            SDL_RenderCopy(renderer, Professor_Diologue_Texture, NULL, &Professor_Diologue_Rect);
+        }
+        if (font != nullptr) {
+            int yOffset = SCREEN_HEIGHT - 210;  // 將對話框的位置往上調整
+            for (const string& line : wrappedText) {
+                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {126, 118, 46});  // 黑色字體
+                SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+                SDL_Rect textRect = { 120, yOffset, textSurface->w, textSurface->h };
+                SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+                yOffset += textSurface->h;  // 增加y偏移量以顯示下一行
+                SDL_FreeSurface(textSurface);
+                SDL_DestroyTexture(textTexture);
+            }
         }
     }
+
 }
 
 void Story::wrapText(const string& text, int maxWidth) {
