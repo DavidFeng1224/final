@@ -1,77 +1,97 @@
 #include "Enemy_Sum.h"
-#include "Global.h"
-#include <SDL2/SDL_image.h>
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
 #include <cmath> // 提供數學運算函數，如 sqrt
+#include <SDL2/SDL_image.h>
+#include <iostream>
 
+/**
+ * @brief 構造函數。
+ * 初始化敵人的速度、位置、材質和血條。
+ */
 Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
-    : BaseEnemy(renderer) {
-    std::srand(static_cast<unsigned>(std::time(0)));
-
+    : BaseEnemy(renderer), mSpeedX(100.0f), mSpeedY(100.0f) {
+    // 初始化隨機位置
     mPosX = static_cast<float>(std::rand() % SCREEN_WIDTH);
     mPosY = static_cast<float>(std::rand() % SCREEN_HEIGHT);
-    mSpeed = 2.0f;
-    mHP = 120;
-    mDamage = 10;
-    mRadius = 25.0f;
 
+    mHP = 120;       // 設定血量
+    mDamage = 10;    // 設定攻擊力
+    mRadius = 25.0f; // 設定半徑大小
+
+    // 初始化血條
+    mHealthBar.setHealth(mHP, 120);
+
+    // 加載圖片
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Sum.png");
     if (!Texture) {
         std::cerr << "Failed to load Enemy_Sum texture: " << IMG_GetError() << std::endl;
     }
 }
 
+/**
+ * @brief 析構函數。
+ * 清理材質資源。
+ */
 Enemy_Sum::~Enemy_Sum() {
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
 }
 
-void Enemy_Sum::update(double deltaTime) {
-    // 傳遞空的其他敵人列表作為占位
-    update(deltaTime, std::vector<BaseEnemy*>());
-}
-
+/**
+ * @brief 更新敵人的狀態，包括移動和處理與其他敵人的碰撞。
+ * @param deltaTime 每一幀的時間間隔。
+ * @param otherEnemies 其他敵人的列表。
+ */
 void Enemy_Sum::update(double deltaTime, const std::vector<BaseEnemy*>& otherEnemies) {
-    mPosX += mSpeed * deltaTime * 100;
-    mPosY += mSpeed * deltaTime * 100;
+    // 更新位置
+    mPosX += mSpeedX * deltaTime;
+    mPosY += mSpeedY * deltaTime;
 
+    // 檢查邊界碰撞
     if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
-        mSpeed = -mSpeed;
+        reflect(-1.0f, 0.0f); // 水平方向反射
     }
     if (mPosY - mRadius < 0 || mPosY + mRadius > SCREEN_HEIGHT) {
-        mSpeed = -mSpeed;
+        reflect(0.0f, -1.0f); // 垂直方向反射
     }
 
+    // 處理與其他敵人的碰撞
     for (BaseEnemy* other : otherEnemies) {
         if (other == this || !other->isAlive()) continue;
 
-        float dx = mPosX - other->getX();
-        float dy = mPosY - other->getY();
+        float dx = other->getX() - mPosX;
+        float dy = other->getY() - mPosY;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-        float overlap = mRadius + other->getRadius() - distance;
-
-        if (overlap > 0) {
+        if (distance < mRadius + other->getRadius()) {
+            // 計算碰撞法線
             float normX = dx / distance;
             float normY = dy / distance;
 
-            mPosX += normX * overlap / 2;
-            mPosY += normY * overlap / 2;
+            // 反射速度
+            reflect(normX, normY);
 
-            other->setPosition(
-                other->getX() - normX * overlap / 2,
-                other->getY() - normY * overlap / 2
-            );
+            // 更新位置，避免重疊
+            float overlap = (mRadius + other->getRadius() - distance);
+            mPosX -= normX * overlap / 2;
+            mPosY -= normY * overlap / 2;
         }
     }
 }
 
-void Enemy_Sum::render(SDL_Renderer *renderer) {
-    BaseEnemy::render(renderer);
+/**
+ * @brief 更新敵人的狀態（重載函數）。
+ * @param deltaTime 每一幀的時間間隔。
+ */
+void Enemy_Sum::update(double deltaTime) {
+    update(deltaTime, std::vector<BaseEnemy*>());
+}
 
+/**
+ * @brief 渲染敵人及其血條。
+ * @param renderer SDL 渲染器指針，用於繪製敵人。
+ */
+void Enemy_Sum::render(SDL_Renderer *renderer) {
     if (Texture) {
         SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
                          static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};
@@ -89,4 +109,21 @@ void Enemy_Sum::render(SDL_Renderer *renderer) {
             }
         }
     }
+
+    // 渲染血條
+    int healthBarX = static_cast<int>(mPosX - mRadius);
+    int healthBarY = static_cast<int>(mPosY - mRadius - 10);
+    mHealthBar.updatePosition(healthBarX, healthBarY);
+    mHealthBar.render(renderer);
+}
+
+/**
+ * @brief 計算反射向量。
+ * @param normX 碰撞法線的 X 分量。
+ * @param normY 碰撞法線的 Y 分量。
+ */
+void Enemy_Sum::reflect(float normX, float normY) {
+    float dotProduct = mSpeedX * normX + mSpeedY * normY;
+    mSpeedX -= 2 * dotProduct * normX;
+    mSpeedY -= 2 * dotProduct * normY;
 }
