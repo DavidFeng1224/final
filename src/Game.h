@@ -5,6 +5,7 @@
 #include "BaseEnemy.h"
 #include "Enemy_Sum.h"
 #include "Enemy_Integral.h"
+#include "Enemy_ANDGate.h"
 #include "Player.h"
 
 class Game {

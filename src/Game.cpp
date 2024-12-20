@@ -176,6 +176,7 @@ void Game::spawnEnemies(Uint32 elapsedTime) {
 
     int numEnemySum = (elapsedTime < 20) ? 3 : 10; // 20 秒內每批生成 3 個，之後生成 10 個
     int numEnemyIntegral = (elapsedTime < 20) ? 5 : 10; // 20 秒內每批生成 5 個，之後生成 10 個
+    int numEnemyANDGate = (elapsedTime < 20) ? 10 : 10; // 20 秒內每批生成 10 個，之後生成 10 個
 
     for (int i = 0; i < numEnemySum; ++i) {
         float x, y;
@@ -198,6 +199,17 @@ void Game::spawnEnemies(Uint32 elapsedTime) {
         enemies.push_back(new Enemy_Integral(mRenderer, &player));
         enemies.back()->setPosition(x, y);
     }
+    for (int i = 0; i < numEnemyANDGate; ++i) {
+    float x, y;
+    do {
+        x = static_cast<float>(rand() % SCREEN_WIDTH);
+        y = static_cast<float>(rand() % SCREEN_HEIGHT);
+    } while (std::sqrt((x - player.getX()) * (x - player.getX()) +
+                       (y - player.getY()) * (y - player.getY())) < minDistance);
+    enemies.push_back(new Enemy_ANDGate(mRenderer));
+    enemies.back()->setPosition(x, y);
+    }
+
 
     cout << "Generated " << numEnemySum << " Enemy_Sum and " << numEnemyIntegral
          << " Enemy_Integral at " << elapsedTime << " seconds." << endl;
