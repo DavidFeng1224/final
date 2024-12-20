@@ -8,17 +8,15 @@
 
 class Instruction {
 public:
-    Instruction(SDL_Renderer* renderer);  // Constructor
-    ~Instruction();  // Destructor
+    Instruction(SDL_Renderer* renderer);
+    ~Instruction();
 
     void handleEvent(SDL_Event& e);
     void render(SDL_Renderer* renderer);
 
 private:
     SDL_Color backgroundColor;
-    SDL_Texture* backgroundTexture = nullptr;  // 新增變數儲存背景圖片的紋理
-
-    // 其他成員變數或函數
+    SDL_Texture* backgroundTexture = nullptr;
 };
 
 #endif

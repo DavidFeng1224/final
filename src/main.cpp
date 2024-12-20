@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "Game.h"
 #include "Instruction.h"
+#include "Story.h"
 #include "Global.h"
 
 Gamemode gamemode = MENU;
@@ -53,6 +54,7 @@ int main(int argc, char* args[]) {
     Menu menu(gRenderer);
     Game game(gRenderer);
     Instruction instruction(gRenderer);
+    Story story(gRenderer);
 
     bool quit = false;
     SDL_Event e;
@@ -81,6 +83,10 @@ int main(int argc, char* args[]) {
                     instruction.handleEvent(e);
                     break;
 
+                case STORY:
+                    story.handleEvent(e);
+                    break;
+
                 case EXIT:
                     break;
 
@@ -106,6 +112,10 @@ int main(int argc, char* args[]) {
 
             case INSTRUCTIONS:
                 instruction.render(gRenderer);
+                break;
+
+            case STORY:
+                story.render(gRenderer);
                 break;
 
             case EXIT:

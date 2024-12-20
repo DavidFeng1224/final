@@ -3,6 +3,7 @@
 
 enum Gamemode {
     MENU,
+    STORY,
     INGAME,
     VICTORY,
     LOSE,

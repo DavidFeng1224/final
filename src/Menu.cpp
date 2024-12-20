@@ -54,8 +54,8 @@ Menu::Menu(SDL_Renderer* renderer)
     // 設定按鈕的點擊事件
     playButton.setOnClick([]() {
         extern Gamemode gamemode;  // 引用全域變數
-        gamemode = INGAME;
-        cout << "Play button clicked! Transitioning to INGAME." << endl;
+        gamemode = STORY;
+        cout << "Play button clicked! Transitioning to STORY." << endl;
     });
 
     howToPlayButton.setOnClick([]() {
