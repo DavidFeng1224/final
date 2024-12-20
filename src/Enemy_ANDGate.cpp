@@ -48,10 +48,43 @@ void Enemy_ANDGate::update(double deltaTime) {
     if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
         reflect();
     }
+
+    // 這裡需要傳入其他敵人列表，進行碰撞檢測
+    // 因此需要在 Game.cpp 中修改邏輯來傳遞敵人列表
 }
 
 /**
- * @brief 渲染敵人及其血條，圖片裁剪為圓形效果。
+ * @brief 處理與其他敵人的水平碰撞。
+ * @param otherEnemies 其他敵人的列表。
+ */
+void Enemy_ANDGate::handleHorizontalCollisions(const std::vector<BaseEnemy*>& otherEnemies) {
+    for (BaseEnemy* other : otherEnemies) {
+        if (other == this || !other->isAlive()) continue;
+
+        float dx = other->getX() - mPosX;
+        float dy = other->getY() - mPosY;
+        float distance = std::sqrt(dx * dx + dy * dy);
+
+        if (distance < mRadius + other->getRadius()) {
+            // 水平速度反轉
+            mSpeedX = -mSpeedX;
+
+            // 更新水平位置，避免重疊
+            float overlap = (mRadius + other->getRadius() - distance);
+            mPosX -= (dx / distance) * overlap / 2;
+        }
+    }
+}
+
+/**
+ * @brief 水平方向反彈。
+ */
+void Enemy_ANDGate::reflect() {
+    mSpeedX = -mSpeedX; // 反轉水平速度
+}
+
+/**
+ * @brief 渲染敵人及其血條。
  * @param renderer SDL 渲染器指針，用於繪製敵人。
  */
 void Enemy_ANDGate::render(SDL_Renderer* renderer) {
@@ -64,30 +97,9 @@ void Enemy_ANDGate::render(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, Texture, NULL, &rect);
     }
 
-    // 繪製圓形遮罩以實現圓形效果
-    int centerX = static_cast<int>(mPosX);
-    int centerY = static_cast<int>(mPosY);
-    int radius = static_cast<int>(mRadius);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // 黑色透明遮罩
-    for (int w = -radius; w <= radius; w++) {
-        for (int h = -radius; h <= radius; h++) {
-            if (w * w + h * h > radius * radius) {
-                SDL_RenderDrawPoint(renderer, centerX + w, centerY + h);
-            }
-        }
-    }
-
     // 渲染血條
     int healthBarX = static_cast<int>(mPosX - mRadius);
     int healthBarY = static_cast<int>(mPosY - mRadius - 10);
     mHealthBar.updatePosition(healthBarX, healthBarY);
     mHealthBar.render(renderer);
-}
-
-/**
- * @brief 水平方向反彈。
- */
-void Enemy_ANDGate::reflect() {
-    mSpeedX = -mSpeedX; // 反轉水平速度
 }

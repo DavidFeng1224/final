@@ -2,8 +2,9 @@
 #define ENEMY_ANDGATE_H
 
 #include "BaseEnemy.h"
-#include "Global.h"
 #include <vector>
+#include "Global.h"
+
 
 /**
  * @class Enemy_ANDGate
@@ -36,7 +37,17 @@ public:
 
 private:
     float mSpeedX; // 水平速度
-    void reflect(); // 反彈邏輯
+
+    /**
+     * @brief 處理與其他敵人的水平碰撞。
+     * @param otherEnemies 其他敵人的列表。
+     */
+    void handleHorizontalCollisions(const std::vector<BaseEnemy*>& otherEnemies);
+
+    /**
+     * @brief 水平方向反彈。
+     */
+    void reflect();
 };
 
 #endif

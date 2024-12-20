@@ -10,6 +10,7 @@
 #include "Global.h"
 #include "Enemy_Sum.h"
 #include "Enemy_Integral.h"
+#include "Enemy_ANDGate.h"
 #include "Player.h"
 #include "BaseEnemy.h"
 
