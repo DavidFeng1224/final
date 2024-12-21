@@ -146,7 +146,8 @@ void Player::fireBullet(int mouseX, int mouseY) {
     float bulletSpeed = 300.0f;  // Example bullet speed
 
     // Add a new bullet to the vector
-    bullets.emplace_back(mPosX, mPosY, dirX, dirY, bulletSpeed);
+    float t = 30.0f;
+    bullets.emplace_back(mPosX + dirX * t, mPosY + dirY * t, dirX, dirY, bulletSpeed);
 }
 bool Player::loadTexture(SDL_Renderer* renderer, const std::string& filePath) {
     SDL_Surface* surface = IMG_Load(filePath.c_str());
