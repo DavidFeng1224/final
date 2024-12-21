@@ -8,9 +8,9 @@
 using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
-    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(50),
+    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
       mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) ,
-     mHealthBar(60, 5) { 
+     mHealthBar(mRadius * 2, 5) { 
     if (!loadTexture(renderer, "assets/images/Player.png")) {
         std::cerr << "Failed to load player texture!" << std::endl;
     }
@@ -88,11 +88,19 @@ void Player::update(double deltaTime) {
                   bullets.end());
 }
 
-void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
-    int centerX = static_cast<int>(mPosX);
-    int centerY = static_cast<int>(mPosY);
-    int radius = mRadius;
+void drawCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
+    for (int w = 0; w < radius * 2; w++) {
+        for (int h = 0; h < radius * 2; h++) {
+            int dx = radius - w; // Horizontal offset
+            int dy = radius - h; // Vertical offset
+            if ((dx*dx + dy*dy) <= (radius * radius)) {
+                SDL_RenderDrawPointF(renderer, centerX + dx, centerY + dy);
+            }
+        }
+    }
+}
 
+void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
     // Render bullets
     for (auto& bullet : bullets) {
         bullet.render(renderer);
@@ -105,13 +113,15 @@ void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
 
     // Render player as texture
     SDL_Rect renderQuad = {
-        static_cast<int>(mPosX - mRadius),
-        static_cast<int>(mPosY - mRadius),
-        mRadius * 2,
-        mRadius * 2
+        static_cast<int>(mPosX - mRadius * 1.5),
+        static_cast<int>(mPosY - mRadius * 1.5),
+        mRadius * 3,
+        mRadius * 3
     };
 
-    SDL_Point center = {mRadius, mRadius}; // Center of the texture for rotation
+    drawCircle(renderer, mPosX, mPosY, 5); // Draw a circle at the player's position
+
+    SDL_Point center = {(int)(mRadius * 1.5), (int)(mRadius * 1.5)}; // Center of the texture for rotation
     SDL_RenderCopyEx(renderer, mTexture, nullptr, &renderQuad, angle, &center, SDL_FLIP_NONE);
 
     // 更新血條位置並渲染
