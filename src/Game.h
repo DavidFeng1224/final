@@ -7,6 +7,7 @@
 #include "Enemy_Integral.h"
 #include "Enemy_ANDGate.h"
 #include "Player.h"
+#include "Enemy_Hsieh.h"
 
 class Game {
 private:

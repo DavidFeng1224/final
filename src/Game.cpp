@@ -137,6 +137,21 @@ void Game::update(double deltaTime) {
             }
         }
     }
+    // 檢查是否需要生成 Enemy_Hsieh
+if (currentTime >= startTime + 20000) { // 超過 20 秒
+    bool noOtherEnemiesAlive = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
+        return enemy->isAlive();
+    });
+
+    bool hsiehNotSpawned = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
+        return dynamic_cast<Enemy_Hsieh*>(enemy);
+    });
+
+    if (noOtherEnemiesAlive && hsiehNotSpawned) {
+        enemies.push_back(new Enemy_Hsieh(mRenderer, startTime + 20000, &player));
+        std::cout << "Spawning Enemy_Hsieh!" << std::endl;
+    }
+}
 
     // 移除已死亡的敵人
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
