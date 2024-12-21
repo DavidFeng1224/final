@@ -50,8 +50,15 @@ Game::Game(SDL_Renderer* renderer)
     // 初始化隨機數種子
     srand(static_cast<unsigned>(time(0)));
 
-    // 新增：遊戲開始時立即生成一批敵人
-    spawnEnemies(0);
+    waves.push({4, 0, 0, 5});
+    waves.push({0, 3, 0, 5});
+    waves.push({0, 0, 5, 5});
+    waves.push({4, 2, 0, 6});
+    waves.push({2, 2, 4, 7});
+    waves.push({3, 3, 3, 7});
+    waves.push({4, 3, 4, 7});
+
+    spawnEnemies();
 }
 
 // Destructor
@@ -94,13 +101,11 @@ void Game::handleEvent(SDL_Event& e) {
 
 // Update game logic
 void Game::update(double deltaTime) {
-    Uint32 currentTime = SDL_GetTicks();                    // 獲取當前時間
-    Uint32 elapsedTime = (currentTime - startTime) / 1000;  // 計算已經過的秒數
+    Uint32 currentTime = SDL_GetTicks();  // 獲取當前時間
 
-    // 每 5 秒生成敵人（限制在 20 秒內）
-    if (elapsedTime <= 20 && (currentTime - lastSpawnTime >= 5000)) {
-        spawnEnemies(elapsedTime);
-        lastSpawnTime = currentTime;  // 更新最後一次生成敵人的時間
+    if (!waves.empty() && currentTime >= lastSpawnTime + currentWave.duration * 1000) {
+        spawnEnemies();
+        lastSpawnTime = currentTime;
     }
 
     // 更新玩家
@@ -194,37 +199,42 @@ void Game::render(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);  // 更新畫面
 }
 
+void Game::spawnEnemySum() {
+    float degree = static_cast<float>(rand() % 360);
+    float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
+    float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
+    enemies.push_back(new Enemy_Sum(mRenderer));
+    enemies.back()->setPosition(x, y);
+}
+
+void Game::spawnEnemyIntegral() {
+    float degree = static_cast<float>(rand() % 360);
+    float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
+    float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
+    enemies.push_back(new Enemy_Integral(mRenderer, &player));
+    enemies.back()->setPosition(x, y);
+}
+
+void Game::spawnEnemyANDGate() {
+    bool left = (rand() % 2) == 0;
+    float x = left ? -200 : SCREEN_WIDTH + 200;
+    x += static_cast<float>(rand() % 100);
+    float y = static_cast<float>(rand() % (SCREEN_HEIGHT - 200) + 100);
+    enemies.push_back(new Enemy_ANDGate(mRenderer));
+    enemies.back()->setPosition(x, y);
+}
+
 // Generate enemies at random positions
-void Game::spawnEnemies(Uint32 elapsedTime) {
-    const float spawnDistance = 600.0f;
+void Game::spawnEnemies() {
+    currentWave = waves.front();
+    waves.pop();
 
-    int numEnemySum = (elapsedTime < 20) ? 3 : 4;       // 20 秒內每批生成 3 個，之後生成 4 個
-    int numEnemyIntegral = (elapsedTime < 20) ? 3 : 5;  // 20 秒內每批生成 3 個，之後生成 5 個
-    int numEnemyANDGate = (elapsedTime < 20) ? 2 : 5;   // 20 秒內每批生成 2 個，之後生成 5 個
+    printf("Spawning wave with %d Sum, %d Integral, and %d ANDGate enemies\n",
+           currentWave.numEnemySum, currentWave.numEnemyIntegral, currentWave.numEnemyANDGate);
 
-    for (int i = 0; i < numEnemySum; ++i) {
-        float degree = static_cast<float>(rand() % 360);
-        float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
-        float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
-        enemies.push_back(new Enemy_Sum(mRenderer));
-        enemies.back()->setPosition(x, y);
-    }
-
-    for (int i = 0; i < numEnemyIntegral; ++i) {
-        float degree = static_cast<float>(rand() % 360);
-        float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
-        float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
-        enemies.push_back(new Enemy_Integral(mRenderer, &player));
-        enemies.back()->setPosition(x, y);
-    }
-
-    for (int i = 0; i < numEnemyANDGate; ++i) {
-        bool left = rand() % 2 == 0;
-        float x = left ? -500 : SCREEN_WIDTH + 100;
-        float y = static_cast<float>(rand() % (SCREEN_HEIGHT - 200) + 100);
-        enemies.push_back(new Enemy_ANDGate(mRenderer));
-        enemies.back()->setPosition(x, y);
-    }
+    for (int i = 0; i < currentWave.numEnemySum; ++i) spawnEnemySum();
+    for (int i = 0; i < currentWave.numEnemyIntegral; ++i) spawnEnemyIntegral();
+    for (int i = 0; i < currentWave.numEnemyANDGate; ++i) spawnEnemyANDGate();
 }
 
 // Check collision between a bullet and an enemy
