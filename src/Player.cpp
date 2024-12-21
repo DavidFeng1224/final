@@ -1,30 +1,32 @@
-#include <SDL2/SDL.h>
-#include <cmath>
 #include "Player.h"
-#include "Global.h"
-#include "Bullet.h"
+
+#include <SDL2/SDL.h>
+
 #include <algorithm>
+#include <cmath>
 #include <iostream>
+
+#include "Bullet.h"
+#include "Global.h"
 using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
-    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) ,
-     mHealthBar(mRadius * 2, 5) { 
+    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30), mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100), mHealthBar(mRadius * 2, 5) {
     if (!loadTexture(renderer, "assets/images/Player.png")) {
         std::cerr << "Failed to load player texture!" << std::endl;
     }
-    // : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-    //   mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(60, 5) { // 初始化血條
-    mHealthBar.setHealth(mHP, 100); // 設定初始血量
-
+    mHealthBar.setHealth(mHP, 100);  // 設定初始血量
+    mSpeed = 200.0;
+    mAcc = 8.0;
+    mFri = 5.0;
+    mVelX = 0;
+    mVelY = 0;
 }
-
 
 void Player::takeDamage(int damage) {
     mHP -= damage;
     if (mHP < 0) mHP = 0;
-    mHealthBar.setHealth(mHP, 100); // 更新血條
+    mHealthBar.setHealth(mHP, 100);  // 更新血條
 }
 
 void Player::handleEvent(SDL_Event& e) {
@@ -34,15 +36,15 @@ void Player::handleEvent(SDL_Event& e) {
         switch (e.key.keysym.sym) {
             case SDLK_UP:
             case SDLK_w:
-                mMoveUp = keyState;     // 記錄UP鍵的狀態
+                mMoveUp = keyState;  // 記錄UP鍵的狀態
                 break;
             case SDLK_DOWN:
             case SDLK_s:
-                mMoveDown = keyState;   // 記錄DOWN鍵的狀態
+                mMoveDown = keyState;  // 記錄DOWN鍵的狀態
                 break;
             case SDLK_LEFT:
             case SDLK_a:
-                mMoveLeft = keyState;   // 記錄LEFT鍵的狀態
+                mMoveLeft = keyState;  // 記錄LEFT鍵的狀態
                 break;
             case SDLK_RIGHT:
             case SDLK_d:
@@ -64,12 +66,29 @@ void Player::setPosition(float x, float y) {
     mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
 }
 
+float lerp(float a, float b, float t) {
+    return a + t * (b - a);
+}
+
 void Player::update(double deltaTime) {
-    // Update player's position
-    if (mMoveUp) mPosY -= mSpeed * deltaTime;
-    if (mMoveDown) mPosY += mSpeed * deltaTime;
-    if (mMoveLeft) mPosX -= mSpeed * deltaTime;
-    if (mMoveRight) mPosX += mSpeed * deltaTime;
+    float dirX = mMoveRight - mMoveLeft;
+    float dirY = mMoveDown - mMoveUp;
+
+    if (dirX != 0 || dirY != 0) {
+        double length = std::sqrt(dirX * dirX + dirY * dirY);
+
+        dirX /= length;
+        dirY /= length;
+
+        mVelX = lerp(mVelX, mSpeed * dirX, mAcc * deltaTime);
+        mVelY = lerp(mVelY, mSpeed * dirY, mAcc * deltaTime);
+    } else {
+        mVelX = lerp(mVelX, 0.0, mFri * deltaTime);
+        mVelY = lerp(mVelY, 0.0, mFri * deltaTime);
+    }
+
+    mPosX += mVelX * deltaTime;
+    mPosY += mVelY * deltaTime;
 
     // Constrain player within screen bounds
     if (mPosX - mRadius < 0) mPosX = mRadius;
@@ -91,9 +110,9 @@ void Player::update(double deltaTime) {
 void drawCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
     for (int w = 0; w < radius * 2; w++) {
         for (int h = 0; h < radius * 2; h++) {
-            int dx = radius - w; // Horizontal offset
-            int dy = radius - h; // Vertical offset
-            if ((dx*dx + dy*dy) <= (radius * radius)) {
+            int dx = radius - w;  // Horizontal offset
+            int dy = radius - h;  // Vertical offset
+            if ((dx * dx + dy * dy) <= (radius * radius)) {
                 SDL_RenderDrawPointF(renderer, centerX + dx, centerY + dy);
             }
         }
@@ -109,19 +128,16 @@ void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
     // Calculate the angle (in degrees) between the player's position and the mouse
     float dirX = mouseX - mPosX;
     float dirY = mouseY - mPosY;
-    float angle = atan2(dirY, dirX) * 180.0 / M_PI +90;  // Convert radians to degrees
+    float angle = atan2(dirY, dirX) * 180.0 / M_PI + 90;  // Convert radians to degrees
 
     // Render player as texture
     SDL_Rect renderQuad = {
         static_cast<int>(mPosX - mRadius * 1.5),
         static_cast<int>(mPosY - mRadius * 1.5),
         mRadius * 3,
-        mRadius * 3
-    };
+        mRadius * 3};
 
-    drawCircle(renderer, mPosX, mPosY, 5); // Draw a circle at the player's position
-
-    SDL_Point center = {(int)(mRadius * 1.5), (int)(mRadius * 1.5)}; // Center of the texture for rotation
+    SDL_Point center = {(int)(mRadius * 1.5), (int)(mRadius * 1.5)};  // Center of the texture for rotation
     SDL_RenderCopyEx(renderer, mTexture, nullptr, &renderQuad, angle, &center, SDL_FLIP_NONE);
 
     // 更新血條位置並渲染
@@ -172,4 +188,3 @@ Player::~Player() {
         SDL_DestroyTexture(mTexture);
     }
 }
-
