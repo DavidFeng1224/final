@@ -2,9 +2,9 @@
 #include "Button.h"
 #include "Global.h"
 #include "AudioManager.h"
-#include <iostream>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
+#include <iostream>
 
 using namespace std;
 

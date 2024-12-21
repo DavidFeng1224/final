@@ -6,6 +6,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include "AudioManager.h"
 #include "Game.h"
 #include "Global.h"
 #include "Enemy_Sum.h"

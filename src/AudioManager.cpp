@@ -34,7 +34,6 @@ void playMusic(const std::string& musicPath, int loops) {
     if (currentMusic) {
         Mix_HaltMusic();
         Mix_FreeMusic(currentMusic);
-        std::cout << "haha didewfje" << '\n';
         currentMusic = nullptr;
     }
 

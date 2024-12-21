@@ -40,6 +40,7 @@ void Story::handleEvent(SDL_Event& e) {
         if (currentLine >= dialogue.size()) {
             extern Gamemode gamemode;
             gamemode = INGAME;
+            playMusic("assets/sounds/Game_BGM.mp3");
         } else {
             wrapText(dialogue[currentLine], SCREEN_WIDTH - 400);  // 更新對話的換行
         }
