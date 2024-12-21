@@ -7,19 +7,14 @@
 using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
-<<<<<<< HEAD
     : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(50),
       mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) ,
-     mHealthBar(50, 5) { 
-    // 初始化血條
-    // Load player texture
+     mHealthBar(60, 5) { 
     if (!loadTexture(renderer, "assets/images/Player.png")) {
         std::cerr << "Failed to load player texture!" << std::endl;
     }
-=======
-    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(60, 5) { // 初始化血條
->>>>>>> 465b829779deb5bcb681956e1fd678cd5e64278d
+    // : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
+    //   mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(60, 5) { // 初始化血條
     mHealthBar.setHealth(mHP, 100); // 設定初始血量
 
 }

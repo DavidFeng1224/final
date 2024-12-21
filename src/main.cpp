@@ -39,16 +39,14 @@ bool init() {
         return false;
     }
 
-<<<<<<< HEAD
     // Initialize SDL_image
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         printf("SDL_image could not initialize! IMG Error: %s\n", IMG_GetError());
         return false;
-=======
+    }
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         return -1;
->>>>>>> 465b829779deb5bcb681956e1fd678cd5e64278d
     }
 
     return true;
@@ -57,11 +55,8 @@ bool init() {
 void close() {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
-<<<<<<< HEAD
     IMG_Quit();
-=======
     cleanupAudio();  // 清理音頻系統
->>>>>>> 465b829779deb5bcb681956e1fd678cd5e64278d
     SDL_Quit();
 }
 
