@@ -1,11 +1,13 @@
 #define SDL_MAIN_HANDLED  // 告訴 SDL2 不要自動處理 main 函數
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include "Menu.h"
 #include "Game.h"
 #include "Instruction.h"
 #include "Story.h"
 #include "Global.h"
+#include "Player.h"
 
 Gamemode gamemode = MENU;
 
@@ -36,12 +38,19 @@ bool init() {
         return false;
     }
 
+    // Initialize SDL_image
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        printf("SDL_image could not initialize! IMG Error: %s\n", IMG_GetError());
+        return false;
+    }
+
     return true;
 }
 
 void close() {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
+    IMG_Quit();
     SDL_Quit();
 }
 
@@ -55,6 +64,8 @@ int main(int argc, char* args[]) {
     Game game(gRenderer);
     Instruction instruction(gRenderer);
     Story story(gRenderer);
+    // Create a Player object
+    Player player(gRenderer, 200.0);  // Pass renderer and speed to the Player constructor
 
     bool quit = false;
     SDL_Event e;

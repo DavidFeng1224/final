@@ -157,8 +157,10 @@ void Game::render(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
     }
 
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY); // Get the current mouse position
     // 渲染玩家
-    player.render(renderer);
+    player.render(renderer, mouseX, mouseY);
 
     // 渲染敵人
     for (BaseEnemy* enemy : enemies) {

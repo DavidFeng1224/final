@@ -7,9 +7,16 @@
 using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
-    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(50, 5) { // 初始化血條
+    : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(50),
+      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) ,
+     mHealthBar(50, 5) { 
+    // 初始化血條
+    // Load player texture
+    if (!loadTexture(renderer, "assets/images/Player.png")) {
+        std::cerr << "Failed to load player texture!" << std::endl;
+    }
     mHealthBar.setHealth(mHP, 100); // 設定初始血量
+
 }
 
 
@@ -52,8 +59,6 @@ void Player::handleEvent(SDL_Event& e) {
     }
 }
 void Player::setPosition(float x, float y) {
-    // mPosX = x;
-    // mPosY = y;
     mPosX = std::clamp(x, static_cast<float>(mRadius), static_cast<float>(SCREEN_WIDTH - mRadius));
     mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
 }
@@ -82,7 +87,7 @@ void Player::update(double deltaTime) {
                   bullets.end());
 }
 
-void Player::render(SDL_Renderer* renderer) {
+void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
     int centerX = static_cast<int>(mPosX);
     int centerY = static_cast<int>(mPosY);
     int radius = mRadius;
@@ -92,15 +97,22 @@ void Player::render(SDL_Renderer* renderer) {
         bullet.render(renderer);
     }
 
-    // Render player as a circle
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Player color: red
-    for (int w = -radius; w < radius; w++) {
-        for (int h = -radius; h < radius; h++) {
-            if (w * w + h * h <= radius * radius) {
-                SDL_RenderDrawPoint(renderer, centerX + w, centerY + h);
-            }
-        }
-    }
+    // Calculate the angle (in degrees) between the player's position and the mouse
+    float dirX = mouseX - mPosX;
+    float dirY = mouseY - mPosY;
+    float angle = atan2(dirY, dirX) * 180.0 / M_PI +90;  // Convert radians to degrees
+
+    // Render player as texture
+    SDL_Rect renderQuad = {
+        static_cast<int>(mPosX - mRadius),
+        static_cast<int>(mPosY - mRadius),
+        mRadius * 2,
+        mRadius * 2
+    };
+
+    SDL_Point center = {mRadius, mRadius}; // Center of the texture for rotation
+    SDL_RenderCopyEx(renderer, mTexture, nullptr, &renderQuad, angle, &center, SDL_FLIP_NONE);
+
     // 更新血條位置並渲染
     int healthBarX = static_cast<int>(mPosX - mRadius);
     int healthBarY = static_cast<int>(mPosY - mRadius - 10);
@@ -125,3 +137,27 @@ void Player::fireBullet(int mouseX, int mouseY) {
     // Add a new bullet to the vector
     bullets.emplace_back(mPosX, mPosY, dirX, dirY, bulletSpeed);
 }
+bool Player::loadTexture(SDL_Renderer* renderer, const std::string& filePath) {
+    SDL_Surface* surface = IMG_Load(filePath.c_str());
+    if (!surface) {
+        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+        return false;
+    }
+
+    mTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    if (!mTexture) {
+        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+Player::~Player() {
+    if (mTexture) {
+        SDL_DestroyTexture(mTexture);
+    }
+}
+
