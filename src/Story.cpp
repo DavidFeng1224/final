@@ -56,15 +56,15 @@ void Story::render(SDL_Renderer* renderer) {
 
     if(currentLine % 2 == 1){
         if (Player_Diologue_Texture) {
-            SDL_Rect Player_Diologue_Rect = {100, 200, 600, 300};
+            SDL_Rect Player_Diologue_Rect = {50, 200, 700, 350};
             SDL_RenderCopy(renderer, Player_Diologue_Texture, NULL, &Player_Diologue_Rect);
         }
         if (font != nullptr) {
-            int yOffset = SCREEN_HEIGHT - 210;
+            int yOffset = SCREEN_HEIGHT - 180;
             for (const string& line : wrappedText) {
                 SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {184, 61, 186});
                 SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-                SDL_Rect textRect = { 240, yOffset, textSurface->w, textSurface->h };
+                SDL_Rect textRect = { 250, yOffset, textSurface->w, textSurface->h };
                 SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
                 yOffset += textSurface->h;
                 SDL_FreeSurface(textSurface);
@@ -73,15 +73,15 @@ void Story::render(SDL_Renderer* renderer) {
         }
     }else{
         if (Professor_Diologue_Texture) {
-            SDL_Rect Professor_Diologue_Rect = {100, 200, 600, 300};
+            SDL_Rect Professor_Diologue_Rect = {50, 200, 700, 350};
             SDL_RenderCopy(renderer, Professor_Diologue_Texture, NULL, &Professor_Diologue_Rect);
         }
         if (font != nullptr) {
-            int yOffset = SCREEN_HEIGHT - 210;
+            int yOffset = SCREEN_HEIGHT - 180;
             for (const string& line : wrappedText) {
                 SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {126, 118, 46});
                 SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-                SDL_Rect textRect = { 120, yOffset, textSurface->w, textSurface->h };
+                SDL_Rect textRect = { 150, yOffset, textSurface->w, textSurface->h };
                 SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
                 yOffset += textSurface->h;
                 SDL_FreeSurface(textSurface);
