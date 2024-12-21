@@ -23,9 +23,12 @@ $(TARGET): $(OBJ_FILES)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+run: $(TARGET)
+	$(TARGET)
+
 # Clean up object files and executable
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET)
+	del /Q obj\*.o main.exe
 
 # Phony targets
 .PHONY: clean
