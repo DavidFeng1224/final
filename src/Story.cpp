@@ -1,12 +1,14 @@
 #include "Story.h"
 #include "Global.h"
+#include "AudioManager.h"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 
 using namespace std;
 
 Story::Story(SDL_Renderer* renderer)
     : mRenderer(renderer), currentLine(0) {
-    font = TTF_OpenFont("assets/fonts/Ubuntu-Medium.ttf", 24);
+    font = TTF_OpenFont("assets/fonts/Futura Book font.ttf", 24);
 
     backgroundTexture = IMG_LoadTexture(mRenderer, "assets/images/Darker_Background_Grass.png");
     Player_Diologue_Texture = IMG_LoadTexture(mRenderer, "assets/images/Player_Dialogue.png");
@@ -17,9 +19,9 @@ Story::Story(SDL_Renderer* renderer)
 
     dialogue.push_back("Welcome to NTUEE!");
     dialogue.push_back("YAYYY!!!");
-    dialogue.push_back("Don't get too excited just yet; there's still a lot ahead of you.");
+    dialogue.push_back("Don't get too excited just yet; there is  still a lot ahead of you.");
     dialogue.push_back("What do you mean?");
-    dialogue.push_back("Try to survive this year! Don't get drowned in the ocean of knowledge.");
+    dialogue.push_back("Try to survive this year! Don't get dro-wned in the ocean of knowledge.");
     dialogue.push_back("(Hears a rumbling sound nearby)");
 
     wrapText(dialogue[currentLine], SCREEN_WIDTH - 400);  // 初始對話換行處理
@@ -57,13 +59,13 @@ void Story::render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, Player_Diologue_Texture, NULL, &Player_Diologue_Rect);
         }
         if (font != nullptr) {
-            int yOffset = SCREEN_HEIGHT - 210;  // 將對話框的位置往上調整
+            int yOffset = SCREEN_HEIGHT - 210;
             for (const string& line : wrappedText) {
-                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {184, 61, 186});  // 黑色字體
+                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {184, 61, 186});
                 SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
                 SDL_Rect textRect = { 240, yOffset, textSurface->w, textSurface->h };
                 SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-                yOffset += textSurface->h;  // 增加y偏移量以顯示下一行
+                yOffset += textSurface->h;
                 SDL_FreeSurface(textSurface);
                 SDL_DestroyTexture(textTexture);
             }
@@ -74,19 +76,18 @@ void Story::render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, Professor_Diologue_Texture, NULL, &Professor_Diologue_Rect);
         }
         if (font != nullptr) {
-            int yOffset = SCREEN_HEIGHT - 210;  // 將對話框的位置往上調整
+            int yOffset = SCREEN_HEIGHT - 210;
             for (const string& line : wrappedText) {
-                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {126, 118, 46});  // 黑色字體
+                SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), {126, 118, 46});
                 SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
                 SDL_Rect textRect = { 120, yOffset, textSurface->w, textSurface->h };
                 SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-                yOffset += textSurface->h;  // 增加y偏移量以顯示下一行
+                yOffset += textSurface->h;
                 SDL_FreeSurface(textSurface);
                 SDL_DestroyTexture(textTexture);
             }
         }
     }
-
 }
 
 void Story::wrapText(const string& text, int maxWidth) {
