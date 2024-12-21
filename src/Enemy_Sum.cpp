@@ -1,17 +1,20 @@
 #include "Enemy_Sum.h"
-#include <cmath>
+
 #include <SDL2/SDL_image.h>
+
+#include <cmath>
 #include <iostream>
 
-Enemy_Sum::Enemy_Sum(SDL_Renderer *renderer)
+Enemy_Sum::Enemy_Sum(SDL_Renderer* renderer)
     : BaseEnemy(renderer), mSpeedX(100.0f), mSpeedY(100.0f) {
     // 初始化隨機位置
     mPosX = static_cast<float>(std::rand() % SCREEN_WIDTH);
     mPosY = static_cast<float>(std::rand() % SCREEN_HEIGHT);
 
-    mHP = 120;       // 設定血量
-    mDamage = 10;    // 設定攻擊力
-    mRadius = 25.0f; // 設定半徑大小
+    mHP = 120;        // 設定血量
+    mDamage = 10;     // 設定攻擊力
+    mRadius = 25.0f;  // 設定半徑大小
+    mIsInMap = false;
 
     // 初始化血條
     mHealthBar.setHealth(mHP, 120);
@@ -30,16 +33,36 @@ Enemy_Sum::~Enemy_Sum() {
 }
 
 void Enemy_Sum::update(double deltaTime, const std::vector<BaseEnemy*>& otherEnemies) {
-    // 更新位置
-    mPosX += mSpeedX * deltaTime;
-    mPosY += mSpeedY * deltaTime;
+    if (mIsInMap == false) {
+        float dx = SCREEN_WIDTH / 2 - mPosX;
+        float dy = SCREEN_HEIGHT / 2 - mPosY;
 
-    // 檢查邊界碰撞
-    if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
-        reflect(-1.0f, 0.0f); // 水平方向反射
-    }
-    if (mPosY - mRadius < 0 || mPosY + mRadius > SCREEN_HEIGHT) {
-        reflect(0.0f, -1.0f); // 垂直方向反射
+        float distance = std::sqrt(dx * dx + dy * dy);
+        if (distance > 0) {
+            dx /= distance;
+            dy /= distance;
+
+            // 更新位置
+            mPosX += dx * mSpeedX * deltaTime;
+            mPosY += dy * mSpeedY * deltaTime;
+        }
+
+        if (mPosX > mRadius && mPosX < SCREEN_WIDTH - mRadius &&
+            mPosY > mRadius && mPosY < SCREEN_HEIGHT - mRadius) {
+            mIsInMap = true;
+        }
+    } else {
+        // 更新位置
+        mPosX += mSpeedX * deltaTime;
+        mPosY += mSpeedY * deltaTime;
+
+        // 檢查邊界碰撞
+        if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
+            reflect(-1.0f, 0.0f);  // 水平方向反射
+        }
+        if (mPosY - mRadius < 0 || mPosY + mRadius > SCREEN_HEIGHT) {
+            reflect(0.0f, -1.0f);  // 垂直方向反射
+        }
     }
 
     // 處理與其他敵人的碰撞
@@ -78,7 +101,7 @@ void Enemy_Sum::update(double deltaTime) {
  * @brief 渲染敵人及其血條。
  * @param renderer SDL 渲染器指針，用於繪製敵人。
  */
-void Enemy_Sum::render(SDL_Renderer *renderer) {
+void Enemy_Sum::render(SDL_Renderer* renderer) {
     if (Texture) {
         SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
                          static_cast<int>(mRadius * 2), static_cast<int>(mRadius * 2)};

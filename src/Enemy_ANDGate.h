@@ -20,6 +20,7 @@ private:
     float speedBoostMultiplier;   // 加速倍率
     Uint32 lastSpeedBoostTime;    // 上次加速的時間戳
     bool isSpeedBoosted;          // 是否處於加速狀態
+    bool mIsInMap;                // 是否在地圖內
 
     void checkWallCollision();    // 檢測牆壁碰撞
     void checkEnemyCollision(const std::vector<BaseEnemy*>& otherEnemies); // 檢測敵人碰撞

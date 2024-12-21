@@ -41,8 +41,10 @@ bool BaseEnemy::isAlive() const { return mHP > 0; }
 
 // 設置敵人位置
 void BaseEnemy::setPosition(float x, float y) {
-    mPosX = std::clamp(x, static_cast<float>(mRadius), static_cast<float>(SCREEN_WIDTH - mRadius));
-    mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
+    mPosX = x;
+    mPosY = y;
+    // mPosX = std::clamp(x, static_cast<float>(mRadius), static_cast<float>(SCREEN_WIDTH - mRadius));
+    // mPosY = std::clamp(y, static_cast<float>(mRadius), static_cast<float>(SCREEN_HEIGHT - mRadius));
 }
 
 // 渲染敵人及其血條

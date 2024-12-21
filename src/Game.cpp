@@ -1,21 +1,24 @@
-#include <iostream>
-#include <vector>
+#include "Game.h"
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
+
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <algorithm>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
+#include <iostream>
+#include <vector>
+
 #include "AudioManager.h"
-#include "Game.h"
-#include "Global.h"
-#include "Enemy_Sum.h"
-#include "Enemy_Integral.h"
-#include "Enemy_ANDGate.h"
-#include "Player.h"
 #include "BaseEnemy.h"
+#include "Enemy_ANDGate.h"
+#include "Enemy_Integral.h"
+#include "Enemy_Sum.h"
+#include "Global.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -74,30 +77,30 @@ Game::~Game() {
 void Game::handleEvent(SDL_Event& e) {
     if (e.type == SDL_QUIT) {
         extern Gamemode gamemode;
-        gamemode = EXIT; // 設定遊戲模式為退出
+        gamemode = EXIT;  // 設定遊戲模式為退出
         cout << "Quit event detected. Exiting game." << endl;
     }
 
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.sym == SDLK_ESCAPE) {
             extern Gamemode gamemode;
-            gamemode = EXIT; // 按下 ESC 鍵退出遊戲
+            gamemode = EXIT;  // 按下 ESC 鍵退出遊戲
             cout << "ESC key pressed. Exiting game." << endl;
         }
     }
 
-    player.handleEvent(e); // 傳遞事件給玩家進行處理
+    player.handleEvent(e);  // 傳遞事件給玩家進行處理
 }
 
 // Update game logic
 void Game::update(double deltaTime) {
-    Uint32 currentTime = SDL_GetTicks(); // 獲取當前時間
-    Uint32 elapsedTime = (currentTime - startTime) / 1000; // 計算已經過的秒數
+    Uint32 currentTime = SDL_GetTicks();                    // 獲取當前時間
+    Uint32 elapsedTime = (currentTime - startTime) / 1000;  // 計算已經過的秒數
 
     // 每 5 秒生成敵人（限制在 20 秒內）
     if (elapsedTime <= 20 && (currentTime - lastSpawnTime >= 5000)) {
         spawnEnemies(elapsedTime);
-        lastSpawnTime = currentTime; // 更新最後一次生成敵人的時間
+        lastSpawnTime = currentTime;  // 更新最後一次生成敵人的時間
     }
 
     // 更新玩家
@@ -116,7 +119,7 @@ void Game::update(double deltaTime) {
             if (enemy->isAlive() && bullet.isActive() &&
                 checkCollision(bullet, *enemy)) {
                 bullet.deactivate();
-                int damage = 50; // 子彈傷害值
+                int damage = 50;  // 子彈傷害值
                 enemy->takeDamage(damage);
             }
         }
@@ -139,35 +142,36 @@ void Game::update(double deltaTime) {
         }
     }
     // 檢查是否需要生成 Enemy_Hsieh
-if (currentTime >= startTime + 20000) { // 超過 20 秒
-    bool noOtherEnemiesAlive = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
-        return enemy->isAlive();
-    });
+    if (currentTime >= startTime + 20000) {  // 超過 20 秒
+        bool noOtherEnemiesAlive = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
+            return enemy->isAlive();
+        });
 
-    bool hsiehNotSpawned = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
-        return dynamic_cast<Enemy_Hsieh*>(enemy);
-    });
+        bool hsiehNotSpawned = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
+            return dynamic_cast<Enemy_Hsieh*>(enemy);
+        });
 
-    if (noOtherEnemiesAlive && hsiehNotSpawned) {
-        enemies.push_back(new Enemy_Hsieh(mRenderer, startTime + 20000, &player));
-        std::cout << "Spawning Enemy_Hsieh!" << std::endl;
+        if (noOtherEnemiesAlive && hsiehNotSpawned) {
+            enemies.push_back(new Enemy_Hsieh(mRenderer, startTime + 20000, &player));
+            std::cout << "Spawning Enemy_Hsieh!" << std::endl;
+        }
     }
-}
 
     // 移除已死亡的敵人
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-                                [](BaseEnemy* enemy) {
-                                    if (!enemy->isAlive()) {
-                                        delete enemy;  // 釋放記憶體
-                                        return true;
-                                    }
-                                    return false;
-                                }),enemies.end());
+                                 [](BaseEnemy* enemy) {
+                                     if (!enemy->isAlive()) {
+                                         delete enemy;  // 釋放記憶體
+                                         return true;
+                                     }
+                                     return false;
+                                 }),
+                  enemies.end());
 }
 
 // Render all game elements
 void Game::render(SDL_Renderer* renderer) {
-    SDL_SetRenderDrawColor(renderer, 204, 204, 204, 255); // 設定背景顏色
+    SDL_SetRenderDrawColor(renderer, 204, 204, 204, 255);  // 設定背景顏色
     SDL_RenderClear(renderer);
 
     // 渲染背景
@@ -176,7 +180,7 @@ void Game::render(SDL_Renderer* renderer) {
     }
 
     int mouseX, mouseY;
-    SDL_GetMouseState(&mouseX, &mouseY); // Get the current mouse position
+    SDL_GetMouseState(&mouseX, &mouseY);  // Get the current mouse position
     // 渲染玩家
     player.render(renderer, mouseX, mouseY);
 
@@ -187,50 +191,40 @@ void Game::render(SDL_Renderer* renderer) {
         }
     }
 
-    SDL_RenderPresent(renderer); // 更新畫面
+    SDL_RenderPresent(renderer);  // 更新畫面
 }
 
 // Generate enemies at random positions
 void Game::spawnEnemies(Uint32 elapsedTime) {
-    const float minDistance = 200.0f; // 與玩家的最小距離
+    const float spawnDistance = 600.0f;
 
-    int numEnemySum = (elapsedTime < 20) ? 3 : 4;      // 20 秒內每批生成 3 個，之後生成 4 個
-    int numEnemyIntegral = (elapsedTime < 20) ? 3 : 5; // 20 秒內每批生成 3 個，之後生成 5 個
-    int numEnemyANDGate = (elapsedTime < 20) ? 2 : 5;  // 20 秒內每批生成 2 個，之後生成 5 個
+    int numEnemySum = (elapsedTime < 20) ? 3 : 4;       // 20 秒內每批生成 3 個，之後生成 4 個
+    int numEnemyIntegral = (elapsedTime < 20) ? 3 : 5;  // 20 秒內每批生成 3 個，之後生成 5 個
+    int numEnemyANDGate = (elapsedTime < 20) ? 2 : 5;   // 20 秒內每批生成 2 個，之後生成 5 個
 
     for (int i = 0; i < numEnemySum; ++i) {
-        float x, y;
-        do {
-            x = static_cast<float>(rand() % SCREEN_WIDTH);
-            y = static_cast<float>(rand() % SCREEN_HEIGHT);
-        } while (std::sqrt((x - player.getX()) * (x - player.getX()) +
-                           (y - player.getY()) * (y - player.getY())) < minDistance);
+        float degree = static_cast<float>(rand() % 360);
+        float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
+        float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
         enemies.push_back(new Enemy_Sum(mRenderer));
         enemies.back()->setPosition(x, y);
     }
 
     for (int i = 0; i < numEnemyIntegral; ++i) {
-        float x, y;
-        do {
-            x = static_cast<float>(rand() % SCREEN_WIDTH);
-            y = static_cast<float>(rand() % SCREEN_HEIGHT);
-        } while (std::sqrt((x - player.getX()) * (x - player.getX()) +
-                           (y - player.getY()) * (y - player.getY())) < minDistance);
+        float degree = static_cast<float>(rand() % 360);
+        float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
+        float y = player.getY() + spawnDistance * std::sin(degree * M_PI / 180);
         enemies.push_back(new Enemy_Integral(mRenderer, &player));
         enemies.back()->setPosition(x, y);
     }
-    for (int i = 0; i < numEnemyANDGate; ++i) {
-    float x, y;
-    do {
-        x = static_cast<float>(rand() % SCREEN_WIDTH);
-        y = static_cast<float>(rand() % SCREEN_HEIGHT);
-    } while (std::sqrt((x - player.getX()) * (x - player.getX()) +
-                       (y - player.getY()) * (y - player.getY())) < minDistance);
-    enemies.push_back(new Enemy_ANDGate(mRenderer));
-    enemies.back()->setPosition(x, y);
-    }
 
-    // cout << "Generated " << numEnemySum << " Enemy_Sum and " << numEnemyIntegral << " Enemy_Integral at " << elapsedTime << " seconds." << endl;
+    for (int i = 0; i < numEnemyANDGate; ++i) {
+        bool left = rand() % 2 == 0;
+        float x = left ? -500 : SCREEN_WIDTH + 100;
+        float y = static_cast<float>(rand() % (SCREEN_HEIGHT - 200) + 100);
+        enemies.push_back(new Enemy_ANDGate(mRenderer));
+        enemies.back()->setPosition(x, y);
+    }
 }
 
 // Check collision between a bullet and an enemy
@@ -281,17 +275,15 @@ void Game::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
 
     enemy1->setPosition(
         enemy1->getX() + dx * moveFactor,
-        enemy1->getY() + dy * moveFactor
-    );
+        enemy1->getY() + dy * moveFactor);
 
     enemy2->setPosition(
         enemy2->getX() - dx * moveFactor,
-        enemy2->getY() - dy * moveFactor
-    );
+        enemy2->getY() - dy * moveFactor);
 }
 
 // Resolve collision between player and an enemy
 void Game::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
-    player.takeDamage(2); // 玩家受傷
+    player.takeDamage(2);  // 玩家受傷
     // cout << "Player collided with enemy and took damage!" << endl;
 }
