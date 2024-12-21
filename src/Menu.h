@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <vector>
 #include "Button.h"
@@ -19,6 +20,7 @@ private:
     SDL_Texture* playButtonTexture = nullptr;       // Play 按鈕圖片
     SDL_Texture* howToPlayButtonTexture = nullptr;  // How to Play 按鈕圖片
     SDL_Texture* exitButtonTexture = nullptr;       // Exit 按鈕圖片
+    Mix_Music* backgroundMusic;
 
     // 標題相關
     SDL_Texture* titleTexture = nullptr;  // 標題圖片紋理

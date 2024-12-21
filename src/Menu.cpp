@@ -1,8 +1,10 @@
 #include "Menu.h"
 #include "Button.h"
 #include "Global.h"
+#include "AudioManager.h"
 #include <iostream>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 using namespace std;
 
@@ -28,6 +30,7 @@ Menu::Menu(SDL_Renderer* renderer)
     if (!backgroundTexture || !playButtonTexture || !howToPlayButtonTexture || !exitButtonTexture || !titleTexture) {
         cout << "Failed to load images: " << IMG_GetError() << endl;
     }
+    playMusic("assets/sounds/Menu_BGM.mp3");
 
     // 定義按鈕顏色
     SDL_Color textColor = {249, 87, 56, 255};   // 黑色文字
@@ -55,6 +58,7 @@ Menu::Menu(SDL_Renderer* renderer)
     playButton.setOnClick([]() {
         extern Gamemode gamemode;  // 引用全域變數
         gamemode = STORY;
+        playMusic("assets/sounds/Story_BGM.mp3");
         cout << "Play button clicked! Transitioning to STORY." << endl;
     });
 
@@ -117,7 +121,6 @@ void Menu::render(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);  // 渲染背景
     }
 
-    // 渲染每個按鈕
     for (auto& button : buttons) {
         button.render(renderer);
     }
@@ -132,7 +135,6 @@ void Menu::render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
         }
     }
-
     if (howToPlayButtonTexture) {
         if(buttons[1].getIsHovered()){
             SDL_Rect howToPlayButtonRect = {292, 385, 216, 85};
@@ -142,7 +144,6 @@ void Menu::render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, howToPlayButtonTexture, NULL, &howToPlayButtonRect);
         }        
     }
-
     if (exitButtonTexture) {
         if(buttons[2].getIsHovered()){
             SDL_Rect exitButtonRect = {292, 475, 216, 85};
@@ -152,7 +153,6 @@ void Menu::render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, exitButtonTexture, NULL, &exitButtonRect);
         }
     }
-
     if (titleTexture) {
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
     }
@@ -174,6 +174,9 @@ Menu::~Menu() {
     if (exitButtonTexture) {
         SDL_DestroyTexture(exitButtonTexture);
     }
-
+    if (backgroundMusic) {
+        Mix_FreeMusic(backgroundMusic);
+    }
+    Mix_CloseAudio();
     IMG_Quit();
 }

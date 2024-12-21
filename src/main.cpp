@@ -1,6 +1,7 @@
 #define SDL_MAIN_HANDLED  // 告訴 SDL2 不要自動處理 main 函數
 #include <SDL2/SDL.h>
 #include <iostream>
+#include "AudioManager.h"
 #include "Menu.h"
 #include "Game.h"
 #include "Instruction.h"
@@ -36,12 +37,18 @@ bool init() {
         return false;
     }
 
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+        std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+
     return true;
 }
 
 void close() {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
+    cleanupAudio();  // 清理音頻系統
     SDL_Quit();
 }
 
@@ -50,6 +57,7 @@ int main(int argc, char* args[]) {
         printf("Failed to initialize!\n");
         return -1;
     }
+    initializeAudio();  
 
     Menu menu(gRenderer);
     Game game(gRenderer);

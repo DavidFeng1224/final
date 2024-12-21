@@ -8,7 +8,7 @@ using namespace std;
 
 Player::Player(SDL_Renderer* renderer, double speed)
     : mSpeed(speed), mPosX(SCREEN_WIDTH / 2), mPosY(SCREEN_HEIGHT / 2), mRadius(30),
-      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(50, 5) { // 初始化血條
+      mMoveUp(false), mMoveDown(false), mMoveLeft(false), mMoveRight(false), mHP(100) , mHealthBar(60, 5) { // 初始化血條
     mHealthBar.setHealth(mHP, 100); // 設定初始血量
 }
 

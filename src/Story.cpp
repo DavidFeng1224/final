@@ -1,5 +1,7 @@
 #include "Story.h"
 #include "Global.h"
+#include "AudioManager.h"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 
 using namespace std;
