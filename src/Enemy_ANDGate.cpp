@@ -17,6 +17,9 @@ Enemy_ANDGate::Enemy_ANDGate(SDL_Renderer* renderer)
 
     mHealthBar.setHealth(mHP, 100);
 
+    speedBoostCooldown = rand() % 4000 + 2000;
+    speedBoostDuration = rand() % 500 + 1500;
+
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_ANDGate.png");
     if (!Texture) {
         std::cerr << "Failed to load Enemy_ANDGate texture: " << IMG_GetError() << std::endl;
@@ -37,12 +40,14 @@ void Enemy_ANDGate::update(double deltaTime, const std::vector<BaseEnemy*>& othe
         }
     } else {
         // 加速邏輯
-        if (!isSpeedBoosted && currentTime - lastSpeedBoostTime >= 5000) {
+        if (!isSpeedBoosted && currentTime - lastSpeedBoostTime >= speedBoostCooldown) {
+            speedBoostCooldown = rand() % 2000 + 4000;
             isSpeedBoosted = true;
             mSpeedX *= speedBoostMultiplier;
             lastSpeedBoostTime = currentTime;
         }
-        if (isSpeedBoosted && currentTime - lastSpeedBoostTime >= 1000) {
+        if (isSpeedBoosted && currentTime - lastSpeedBoostTime >= speedBoostDuration) {
+            speedBoostDuration = rand() % 500 + 1500;
             isSpeedBoosted = false;
             mSpeedX = (mSpeedX > 0 ? normalSpeed : -normalSpeed);
         }
