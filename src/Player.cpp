@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Global.h"
 #include "Bullet.h"
+#include <algorithm>
 #include <iostream>
 using namespace std;
 
