@@ -1,4 +1,3 @@
-// 
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -38,7 +37,7 @@ private:
     int mHP;  // 玩家生命值
     HealthBar mHealthBar; // 添加血條
     std::vector<Bullet> bullets; // Container for bullets
-
+    SDL_Renderer* mRenderer;
     // Texture for player image
     SDL_Texture* mTexture; // Add a texture for the player
 
