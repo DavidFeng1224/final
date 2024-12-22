@@ -1,6 +1,7 @@
 #ifndef FINALGAME_H
 #define FINALGAME_H
 
+#include <SDL2/SDL.h>
 #include <vector>
 #include <queue>
 #include "BaseEnemy.h"
@@ -10,12 +11,7 @@
 #include "Player.h"
 #include "Enemy_Hsieh.h"
 
-struct Wave2 {
-    int numEnemySum;
-    int numEnemyIntegral;
-    int numEnemyANDGate;
-    Uint32 duration;
-};
+
 
 class FinalGame {
 private:
@@ -27,15 +23,18 @@ private:
     SDL_Renderer* mRenderer;
     float spawnDistance = 600.0f;
     int enemyLeft = 46;
+    bool hasSpawnedHsieh; // 是否已生成 Enemy_Hsieh
 
-    std::queue<Wave2> waves;
-    Wave2 currentWave;
+    std::queue<Wave> waves;
+    Wave currentWave;
 
     void spawnEnemies(); // 生成敵人
-    void spawnEnemySum();
-    void spawnEnemyIntegral();
-    void spawnEnemyANDGate();
+    void spawnEnemyHsieh(); // 生成 Enemy_Hsieh
     void resolvePlayerEnemyCollision(BaseEnemy* enemy); // 處理玩家與敵人的碰撞
+    void spawnEnemySum();        // 生成 Enemy_Sum
+    void spawnEnemyIntegral();   // 生成 Enemy_Integral
+    void spawnEnemyANDGate();    // 生成 Enemy_ANDGate
+
 
 public:
     FinalGame(SDL_Renderer* renderer);
@@ -46,8 +45,6 @@ public:
     void update(double deltaTime);
     bool checkCollision(const Bullet& bullet, const BaseEnemy& enemy) const;
     bool checkPlayerCollision(const Player& player, const BaseEnemy& enemy) const;
-    bool checkEnemyCollision(const BaseEnemy& enemy1, const BaseEnemy& enemy2) const;
-    void resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2);
 };
 
 #endif
