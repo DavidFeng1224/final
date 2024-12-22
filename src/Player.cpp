@@ -137,17 +137,6 @@ void Player::update(double deltaTime) {
                   bullets.end());
 }
 
-void drawCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
-    for (int w = 0; w < radius * 2; w++) {
-        for (int h = 0; h < radius * 2; h++) {
-            int dx = radius - w;  // Horizontal offset
-            int dy = radius - h;  // Vertical offset
-            if ((dx * dx + dy * dy) <= (radius * radius)) {
-                SDL_RenderDrawPointF(renderer, centerX + dx, centerY + dy);
-            }
-        }
-    }
-}
 
 void Player::startBounce(float dirX, float dirY) {
     bounceTimeLeft = bounceTotalTime; // 初始化彈開總時間

@@ -33,7 +33,7 @@ void BaseEnemy::setSpeed(float speed) { mSpeed = speed; }
 void BaseEnemy::takeDamage(int damage) {
     mHP -= damage;
     if (mHP < 0) mHP = 0;
-    mHealthBar.setHealth(mHP, 100);
+    mHealthBar.setHealth(mHP);
 }
 
 // 檢查敵人是否存活

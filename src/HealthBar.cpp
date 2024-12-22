@@ -9,7 +9,7 @@ HealthBar::HealthBar(int width, int height)
 
 void HealthBar::setHealth(int current, int max) {
     mCurrentHealth = current;
-    mMaxHealth = max;
+    if (max >= 0) mMaxHealth = max;
 }
 
 void HealthBar::updatePosition(int x, int y) {
@@ -28,4 +28,9 @@ void HealthBar::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, mForegroundColor.r, mForegroundColor.g, mForegroundColor.b, mForegroundColor.a);
     SDL_Rect foregroundRect = {mPosX, mPosY, static_cast<int>(mWidth * healthRatio), mHeight};
     SDL_RenderFillRect(renderer, &foregroundRect);
+}
+
+void HealthBar::setSize(int width, int height) {
+    mWidth = width;
+    mHeight = height;
 }
