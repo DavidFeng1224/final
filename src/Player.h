@@ -43,9 +43,13 @@ class Player {
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
     int mHP;                      // 玩家生命值
-    int   bounceFrames;       // 還剩多少幀要做彈開
-    float currentBounceDist;  // 這一幀要移動的距離
-    float bounceDirX, bounceDirY; // 碰撞時的方向單位向量
+    float bounceDirX;         // 彈開方向 X
+    float bounceDirY;         // 彈開方向 Y
+    float bounceTimeLeft;     // 剩餘彈開時間 (秒)
+    float bounceTotalTime;    // 總彈開時間
+    float bounceVelocity;     // 初始速度 (像素/秒)
+    float damping;            // 速度衰減參數
+
     HealthBar mHealthBar;         // 添加血條
     std::vector<Bullet> bullets;  // Container for bullets
 
