@@ -16,7 +16,6 @@ Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* playe
     mDamage = 50;     // 高傷害
     mRadius = 60.0f;  // 大小半徑
     mHealthBar = HealthBar(120, 5); // 將寬度改為 200
-    mHealthBar.setHealth(mHP, 200);
 
     // 初始化隨機方向
     generateRandomDirection();
@@ -28,7 +27,8 @@ Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* playe
     }
 
     // 初始化血條
-    mHealthBar.setHealth(mHP, 240);
+    mHealthBar.setSize(120, 5);
+    mHealthBar.setHealth(mHP, 2000);
 }
 
 // 析構函式
@@ -61,11 +61,11 @@ void Enemy_Hsieh::update(double deltaTime) {
     mPosY += randomDirY * effectiveSpeed * deltaTime;
 
     // 確保敵人在螢幕範圍內，並反彈
-    if (mPosX < 0 || mPosX > SCREEN_WIDTH) {
+    if (mPosX < mRadius || mPosX > SCREEN_WIDTH - mRadius) {
     randomDirX = -randomDirX; // 反轉 X 方向
     mPosX = std::clamp(mPosX, 0.0f, static_cast<float>(SCREEN_WIDTH));
     }
-    if (mPosY < 0 || mPosY > SCREEN_HEIGHT) {
+    if (mPosY < mRadius || mPosY > SCREEN_HEIGHT - mRadius) {
     randomDirY = -randomDirY; // 反轉 Y 方向
     mPosY = std::clamp(mPosY, 0.0f, static_cast<float>(SCREEN_HEIGHT));
     }
