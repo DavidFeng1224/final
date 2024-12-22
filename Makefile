@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -I./src/include
+CXXFLAGS = -std=c++17 -I./src/include -static
 LDFLAGS = -L./src/lib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 # Directories
@@ -17,7 +17,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 # Build target
 $(TARGET): $(OBJ_FILES)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) -mwindows
 
 # Compile source files to object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp

@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <windows.h>
 #include "AudioManager.h"
 #include "Menu.h"
 #include "Game.h"
@@ -64,7 +65,8 @@ void close() {
     SDL_Quit();
 }
 
-int main(int argc, char* args[]) {
+// int main(int argc, char* args[]) {
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     if (!init()) {
         printf("Failed to initialize!\n");
         return -1;
