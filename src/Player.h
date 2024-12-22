@@ -7,7 +7,7 @@
 
 #include <string>  // for file path string
 #include <vector>  // For storing bullets
-
+#include "BaseEnemy.h"
 #include "Bullet.h"  // Include Bullet definition
 #include "HealthBar.h"
 
@@ -19,7 +19,7 @@ class Player {
     void handleEvent(SDL_Event& e);
     void update(double deltaTime);
     void render(SDL_Renderer* renderer, int mouseX, int mouseY);
-
+    void resolveCollision(BaseEnemy& enemy, int& bounceStep);
     void fireBullet(int mouseX, int mouseY);
     void setPosition(float x, float y);  // Declare setPosition method
 
