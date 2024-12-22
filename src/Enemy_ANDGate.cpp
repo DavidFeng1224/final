@@ -68,8 +68,11 @@ void Enemy_ANDGate::update(double deltaTime) {
 }
 
 void Enemy_ANDGate::checkWallCollision() {
-    if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
-        mSpeedX = -mSpeedX;  // 水平方向反轉
+    if (mPosX - mRadius < 0) {
+        mSpeedX = abs(mSpeedX);  // 水平方向反轉
+    }
+    if (mPosX + mRadius > SCREEN_WIDTH) {
+        mSpeedX = -abs(mSpeedX);  // 水平方向反轉
     }
 }
 

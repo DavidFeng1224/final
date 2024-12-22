@@ -91,8 +91,8 @@ FinalGame::~FinalGame() {
 void FinalGame::update(double deltaTime) {
     Uint32 currentTime = SDL_GetTicks();
 
-    // 每 5 秒生成敵人
-    if (enemyHsiehAlive && currentTime >= lastSpawnTime + 5000) {
+    // 每 7 秒生成敵人
+    if (enemyHsiehAlive && currentTime >= lastSpawnTime + 7000) {
         for (int i = 0; i < 2; ++i) {
             spawnEnemySum();
             spawnEnemyIntegral();
