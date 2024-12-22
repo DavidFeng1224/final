@@ -1,6 +1,9 @@
 #include "FinalGame.h"
+#include "AudioManager.h"
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -112,6 +115,7 @@ void FinalGame::update(double deltaTime) {
         }
     }
 
+    IsWin = true;
     // 處理子彈與敵人的碰撞
     for (BaseEnemy* enemy : enemies) {
         for (auto& bullet : player.getBullets()) {
@@ -126,6 +130,9 @@ void FinalGame::update(double deltaTime) {
                 }
             }
         }
+        if(enemy->isAlive()){
+            IsWin = false;
+        }
     }
 
     // 移除已死亡的敵人
@@ -138,6 +145,12 @@ void FinalGame::update(double deltaTime) {
                                 return false;
                             }),
                   enemies.end());
+
+    if(IsWin && !enemyHsiehAlive){
+        extern Gamemode gamemode;  // 引用全域變數
+        gamemode = VICTORY;
+        playMusic("assets/sounds/Victory_BGM.mp3");
+    }
 }
 
 // 生成特殊敵人 Enemy_Hsieh
