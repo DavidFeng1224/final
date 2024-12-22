@@ -2,11 +2,20 @@
 #define GAME_H
 
 #include <vector>
+#include <queue>
 #include "BaseEnemy.h"
 #include "Enemy_Sum.h"
 #include "Enemy_Integral.h"
 #include "Enemy_ANDGate.h"
 #include "Player.h"
+#include "Enemy_Hsieh.h"
+
+struct Wave {
+    int numEnemySum;
+    int numEnemyIntegral;
+    int numEnemyANDGate;
+    Uint32 duration;
+};
 
 class Game {
 private:
@@ -16,8 +25,16 @@ private:
     Uint32 startTime;
     Uint32 lastSpawnTime;
     SDL_Renderer* mRenderer;
+    float spawnDistance = 600.0f;
+    int enemyLeft = 46;
 
-    void spawnEnemies(Uint32 elapsedTime); // 生成敵人
+    std::queue<Wave> waves;
+    Wave currentWave;
+
+    void spawnEnemies(); // 生成敵人
+    void spawnEnemySum();
+    void spawnEnemyIntegral();
+    void spawnEnemyANDGate();
     void resolvePlayerEnemyCollision(BaseEnemy* enemy); // 處理玩家與敵人的碰撞
 
 public:

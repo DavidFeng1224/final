@@ -1,19 +1,24 @@
 #include "Enemy_ANDGate.h"
+
 #include <SDL2/SDL_image.h>
+
 #include <cmath>
 #include <iostream>
 
 Enemy_ANDGate::Enemy_ANDGate(SDL_Renderer* renderer)
-    : BaseEnemy(renderer), mSpeedX(100.0f), normalSpeed(100.0f),
-      speedBoostMultiplier(2.0f), lastSpeedBoostTime(0), isSpeedBoosted(false) {
+    : BaseEnemy(renderer), mSpeedX(100.0f), normalSpeed(100.0f), speedBoostMultiplier(2.0f), lastSpeedBoostTime(0), isSpeedBoosted(false) {
     mPosX = static_cast<float>(std::rand() % SCREEN_WIDTH);
     mPosY = static_cast<float>(std::rand() % SCREEN_HEIGHT);
 
-    mHP = 100;       
-    mDamage = 15;    
-    mRadius = 20.0f; 
+    mHP = 100;
+    mDamage = 15;
+    mRadius = 20.0f;
+    mIsInMap = false;
 
     mHealthBar.setHealth(mHP, 100);
+
+    speedBoostCooldown = rand() % 4000 + 2000;
+    speedBoostDuration = rand() % 500 + 1500;
 
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_ANDGate.png");
     if (!Texture) {
@@ -24,22 +29,35 @@ Enemy_ANDGate::Enemy_ANDGate(SDL_Renderer* renderer)
 void Enemy_ANDGate::update(double deltaTime, const std::vector<BaseEnemy*>& otherEnemies) {
     Uint32 currentTime = SDL_GetTicks();
 
-    // 加速邏輯
-    if (!isSpeedBoosted && currentTime - lastSpeedBoostTime >= 5000) {
-        isSpeedBoosted = true;
-        mSpeedX *= speedBoostMultiplier;
-        lastSpeedBoostTime = currentTime;
-    }
-    if (isSpeedBoosted && currentTime - lastSpeedBoostTime >= 1000) {
-        isSpeedBoosted = false;
-        mSpeedX = (mSpeedX > 0 ? normalSpeed : -normalSpeed);
-    }
+    if (mIsInMap == false) {
+        float dx = SCREEN_WIDTH / 2 - mPosX;
+        dx = (dx > 0 ? 1 : -1);
+        mPosX += dx * mSpeedX * deltaTime;
 
-    // 更新水平位置
-    mPosX += mSpeedX * deltaTime;
+        if (mPosX > mRadius && mPosX < SCREEN_WIDTH - mRadius &&
+            mPosY > mRadius && mPosY < SCREEN_HEIGHT - mRadius) {
+            mIsInMap = true;
+        }
+    } else {
+        // 加速邏輯
+        if (!isSpeedBoosted && currentTime - lastSpeedBoostTime >= speedBoostCooldown) {
+            speedBoostCooldown = rand() % 2000 + 4000;
+            isSpeedBoosted = true;
+            mSpeedX *= speedBoostMultiplier;
+            lastSpeedBoostTime = currentTime;
+        }
+        if (isSpeedBoosted && currentTime - lastSpeedBoostTime >= speedBoostDuration) {
+            speedBoostDuration = rand() % 500 + 1500;
+            isSpeedBoosted = false;
+            mSpeedX = (mSpeedX > 0 ? normalSpeed : -normalSpeed);
+        }
 
-    // 檢查牆壁碰撞
-    checkWallCollision();
+        // 更新水平位置
+        mPosX += mSpeedX * deltaTime;
+
+        // 檢查牆壁碰撞
+        checkWallCollision();
+    }
 
     // 檢查敵人碰撞
     checkEnemyCollision(otherEnemies);
@@ -51,7 +69,7 @@ void Enemy_ANDGate::update(double deltaTime) {
 
 void Enemy_ANDGate::checkWallCollision() {
     if (mPosX - mRadius < 0 || mPosX + mRadius > SCREEN_WIDTH) {
-        mSpeedX = -mSpeedX; // 水平方向反轉
+        mSpeedX = -mSpeedX;  // 水平方向反轉
     }
 }
 
@@ -64,7 +82,7 @@ void Enemy_ANDGate::checkEnemyCollision(const std::vector<BaseEnemy*>& otherEnem
         float distance = std::sqrt(dx * dx + dy * dy);
 
         if (distance < mRadius + enemy->getRadius()) {
-            mSpeedX = -mSpeedX; // 水平方向反轉
+            mSpeedX = -mSpeedX;  // 水平方向反轉
 
             // 調整位置以避免重疊
             float overlap = (mRadius + enemy->getRadius() - distance);

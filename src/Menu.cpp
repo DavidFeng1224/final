@@ -57,7 +57,7 @@ Menu::Menu(SDL_Renderer* renderer)
     // 設定按鈕的點擊事件
     playButton.setOnClick([]() {
         extern Gamemode gamemode;  // 引用全域變數
-        gamemode = STORY;
+        gamemode = STORY1;
         playMusic("assets/sounds/Story_BGM.mp3");
         cout << "Play button clicked! Transitioning to STORY." << endl;
     });

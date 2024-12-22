@@ -17,6 +17,7 @@ public:
 private:
     float mSpeedX;
     float mSpeedY;
+    bool mIsInMap;
     void reflect(float normX, float normY);
 };
 
