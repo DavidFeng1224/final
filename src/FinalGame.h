@@ -24,7 +24,7 @@ private:
     float spawnDistance;             // 敵人生成的距離半徑
     bool enemyHsiehAlive;            // 判定 Enemy_Hsieh 是否存活
     bool hasSpawnedHsieh;            // 是否生成過 Enemy_Hsieh
-    bool IsWin = false; //
+    bool isPositionOverlapping(float x, float y, float radius) const;
 
     // 私有函式
     void spawnEnemies();                 // 生成敵人
