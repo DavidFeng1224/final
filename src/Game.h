@@ -10,12 +10,7 @@
 #include "Player.h"
 #include "Enemy_Hsieh.h"
 
-struct Wave {
-    int numEnemySum;
-    int numEnemyIntegral;
-    int numEnemyANDGate;
-    Uint32 duration;
-};
+
 
 class Game {
 private:

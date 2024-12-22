@@ -3,24 +3,25 @@
 
 #include "BaseEnemy.h"
 #include "Player.h"
-#include "Global.h" // 確保可以使用全域變數和常量
-#include <vector>
+#include "Global.h"
 
 class Enemy_Hsieh : public BaseEnemy {
 public:
-    Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, const Player* player);
+    Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* player);
     ~Enemy_Hsieh();
 
-    void update(double deltaTime) override; // 必須實作的純虛函數
-    void update(double deltaTime, const std::vector<BaseEnemy*>& otherEnemies, Uint32 currentTime);
+    void update(double deltaTime) override;
     void render(SDL_Renderer* renderer) override;
 
-    bool canAppear(const std::vector<BaseEnemy*>& otherEnemies, Uint32 currentTime) const;
-
 private:
-    bool isActive;    // 是否已經出現
-    Uint32 spawnTime; // 出現的時間戳（例如遊戲開始 20 秒後）
-    const Player* player; // 指向玩家的指標，用於計算逃跑方向
+    Player* target;       // 指向玩家的指標
+    Uint32 spawnTime;     // 生成的時間戳
+    float speedMultiplier; // 加速倍率
+    bool isBoosted;       // 是否正在加速狀態
+    Uint32 boostStartTime;// 加速的開始時間
+    Uint32 boostDuration; // 加速持續時間
+
+    void checkCollisionWithPlayer();
 };
 
 #endif
