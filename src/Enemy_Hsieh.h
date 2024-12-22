@@ -21,7 +21,12 @@ private:
     Uint32 boostStartTime;// 加速的開始時間
     Uint32 boostDuration; // 加速持續時間
 
-    void checkCollisionWithPlayer();
+    float randomDirX;     // 隨機方向的 X 分量
+    float randomDirY;     // 隨機方向的 Y 分量
+    Uint32 lastRandomMoveTime; // 上次隨機移動的時間戳
+
+    void generateRandomDirection(); // 生成隨機方向
+    void checkCollisionWithPlayer(); // 檢查與玩家的碰撞
 };
 
 #endif

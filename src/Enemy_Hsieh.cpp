@@ -2,16 +2,22 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 
+// 構造函式
 Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* player)
-    : BaseEnemy(renderer), spawnTime(spawnTime), target(player), speedMultiplier(2.0f), isBoosted(false), boostStartTime(0), boostDuration(1000) {
-    // 初始化屬性
+    : BaseEnemy(renderer), spawnTime(spawnTime), target(player), speedMultiplier(2.0f), 
+      isBoosted(false), boostStartTime(0), boostDuration(1000), lastRandomMoveTime(SDL_GetTicks()) {
+    // 初始化位置
     mPosX = static_cast<float>(std::rand() % SCREEN_WIDTH);
     mPosY = static_cast<float>(std::rand() % SCREEN_HEIGHT);
-    mSpeed = 150.0f;  // 基礎速度
-    mHP = 200;        // 高血量
+    mSpeed = 100.0f;  // 基礎速度
+    mHP = 2000;       // 高血量
     mDamage = 50;     // 高傷害
     mRadius = 30.0f;  // 大小半徑
+
+    // 初始化隨機方向
+    generateRandomDirection();
 
     // 加載圖片
     Texture = IMG_LoadTexture(renderer, "assets/images/Enemy_Hsieh.png");
@@ -19,45 +25,52 @@ Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* playe
         std::cerr << "Failed to load Enemy_Hsieh texture: " << IMG_GetError() << std::endl;
     }
 
+    // 初始化血條
     mHealthBar.setHealth(mHP, 200);
 }
 
+// 析構函式
 Enemy_Hsieh::~Enemy_Hsieh() {
     if (Texture) {
         SDL_DestroyTexture(Texture);
     }
 }
 
+// 更新邏輯
 void Enemy_Hsieh::update(double deltaTime) {
-    if (!target) return;
+    Uint32 currentTime = SDL_GetTicks();
 
-    // 計算方向向量
-    float dx = target->getX() - mPosX;
-    float dy = target->getY() - mPosY;
-    float distance = std::sqrt(dx * dx + dy * dy);
-
-    if (distance > 0) {
-        dx /= distance;
-        dy /= distance;
-
-        // 移動敵人
-        float effectiveSpeed = isBoosted ? mSpeed * speedMultiplier : mSpeed;
-        mPosX += dx * effectiveSpeed * deltaTime;
-        mPosY += dy * effectiveSpeed * deltaTime;
+    // 每 3 秒爆衝
+    if (currentTime - lastRandomMoveTime > 3000) {
+        isBoosted = true;
+        boostStartTime = currentTime;
+        generateRandomDirection(); // 更新隨機方向
+        lastRandomMoveTime = currentTime;
     }
 
-    // 檢查加速狀態
-    Uint32 currentTime = SDL_GetTicks();
+    // 如果在加速狀態，檢查加速是否結束
     if (isBoosted && currentTime - boostStartTime > boostDuration) {
         isBoosted = false;
     }
+
+    // 移動邏輯
+    float effectiveSpeed = isBoosted ? mSpeed * speedMultiplier : mSpeed;
+    mPosX += randomDirX * effectiveSpeed * deltaTime;
+    mPosY += randomDirY * effectiveSpeed * deltaTime;
+
+    // 確保敵人在螢幕範圍內
+    if (mPosX < 0) mPosX = 0;
+    if (mPosX > SCREEN_WIDTH) mPosX = SCREEN_WIDTH;
+    if (mPosY < 0) mPosY = 0;
+    if (mPosY > SCREEN_HEIGHT) mPosY = SCREEN_HEIGHT;
 
     // 檢查與玩家的碰撞
     checkCollisionWithPlayer();
 }
 
+// 繪製邏輯
 void Enemy_Hsieh::render(SDL_Renderer* renderer) {
-    BaseEnemy::render(renderer);  // 繪製基本敵人邏輯
+    BaseEnemy::render(renderer);
 
     if (Texture) {
         SDL_Rect rect = {static_cast<int>(mPosX - mRadius), static_cast<int>(mPosY - mRadius),
@@ -66,6 +79,22 @@ void Enemy_Hsieh::render(SDL_Renderer* renderer) {
     }
 }
 
+// 生成隨機方向
+void Enemy_Hsieh::generateRandomDirection() {
+    do {
+        randomDirX = static_cast<float>((std::rand() % 200 - 100)) / 100.0f; // 隨機範圍 [-1, 1]
+        randomDirY = static_cast<float>((std::rand() % 200 - 100)) / 100.0f;
+
+        // 規範化方向向量
+        float magnitude = std::sqrt(randomDirX * randomDirX + randomDirY * randomDirY);
+        if (magnitude > 0) {
+            randomDirX /= magnitude;
+            randomDirY /= magnitude;
+        }
+    } while (std::abs(randomDirX) < 0.1f && std::abs(randomDirY) < 0.1f); // 確保方向不為零
+}
+
+// 檢查與玩家的碰撞
 void Enemy_Hsieh::checkCollisionWithPlayer() {
     if (!target) return;
 
@@ -75,10 +104,8 @@ void Enemy_Hsieh::checkCollisionWithPlayer() {
     float distance = std::sqrt(dx * dx + dy * dy);
 
     if (distance < mRadius + target->getRadius()) {
-        // 撞擊後造成傷害並加速
+        // 撞擊後造成傷害
         target->takeDamage(mDamage);
-        isBoosted = true;
-        boostStartTime = SDL_GetTicks();
         std::cout << "Enemy_Hsieh collided with the player!" << std::endl;
     }
 }
