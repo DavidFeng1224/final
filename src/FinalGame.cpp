@@ -151,6 +151,11 @@ void FinalGame::update(double deltaTime) {
         gamemode = VICTORY;
         playMusic("assets/sounds/Victory_BGM.mp3");
     }
+    if(player.getHP() <= 0){
+        extern Gamemode gamemode;
+        gamemode = GAMEOVER;
+        playMusic("assets/sounds/GameOver_BGM.mp3");
+    }
 }
 
 // 生成特殊敵人 Enemy_Hsieh

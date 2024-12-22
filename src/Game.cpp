@@ -137,7 +137,7 @@ void Game::update(double deltaTime) {
         int bounceStep = 10;  // 每次初始化反彈步驟數
         while (enemy->isAlive() && checkPlayerCollision(player, *enemy)) {
             player.resolveCollision(*enemy, bounceStep);
-            player.takeDamage(2);  // 玩家受傷
+            player.takeDamage(5);  // 玩家受傷
         }
     }
 
@@ -158,21 +158,6 @@ void Game::update(double deltaTime) {
         gamemode = STORY2;
         playMusic("assets/sounds/Story_BGM.mp3");
     }
-    // 檢查是否需要生成 Enemy_Hsieh
-    if (currentTime >= startTime + 20000) {  // 超過 20 秒
-        bool noOtherEnemiesAlive = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
-            return enemy->isAlive();
-        });
-
-        bool hsiehNotSpawned = std::none_of(enemies.begin(), enemies.end(), [](BaseEnemy* enemy) {
-            return dynamic_cast<Enemy_Hsieh*>(enemy);
-        });
-
-        if (noOtherEnemiesAlive && hsiehNotSpawned) {
-            enemies.push_back(new Enemy_Hsieh(mRenderer, startTime + 20000, &player));
-            std::cout << "Spawning Enemy_Hsieh!" << std::endl;
-        }
-    }
 
     // 移除已死亡的敵人
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
@@ -184,6 +169,12 @@ void Game::update(double deltaTime) {
                                      return false;
                                  }),
                   enemies.end());
+
+    if(player.getHP() <= 0){
+        extern Gamemode gamemode;
+        gamemode = GAMEOVER;
+        playMusic("assets/sounds/GameOver_BGM.mp3");
+    }
 }
 
 // Render all game elements
@@ -306,6 +297,5 @@ void Game::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
 
 // Resolve collision between player and an enemy
 void Game::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
-    player.takeDamage(2);  // 玩家受傷
-    // cout << "Player collided with enemy and took damage!" << endl;
+    player.takeDamage(5);  // 玩家受傷
 }

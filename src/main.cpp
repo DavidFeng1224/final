@@ -10,6 +10,7 @@
 #include "Story1.h"
 #include "Story2.h"
 #include "Victory.h"
+#include "Gameover.h"
 #include "Global.h"
 #include "Player.h"
 
@@ -77,6 +78,7 @@ int main(int argc, char* args[]) {
     Story1 story1(gRenderer);
     Story2 story2(gRenderer);
     Victory victory(gRenderer);
+    Gameover gameover(gRenderer);
     // Create a Player object
     Player player(gRenderer, 200.0);  // Pass renderer and speed to the Player constructor
 
@@ -123,6 +125,10 @@ int main(int argc, char* args[]) {
                     victory.handleEvent(e);
                     break;
 
+                case GAMEOVER:
+                    gameover.handleEvent(e);
+                    break;
+
                 case EXIT:
                     break;
 
@@ -165,6 +171,10 @@ int main(int argc, char* args[]) {
 
             case VICTORY:
                 victory.render(gRenderer);
+                break;
+
+            case GAMEOVER:
+                gameover.render(gRenderer);
                 break;
 
             case EXIT:

@@ -14,7 +14,9 @@ Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* playe
     mSpeed = 100.0f;  // 基礎速度
     mHP = 2000;       // 高血量
     mDamage = 50;     // 高傷害
-    mRadius = 30.0f;  // 大小半徑
+    mRadius = 60.0f;  // 大小半徑
+    mHealthBar = HealthBar(120, 5); // 將寬度改為 200
+    mHealthBar.setHealth(mHP, 2000);
 
     // 初始化隨機方向
     generateRandomDirection();
@@ -26,7 +28,7 @@ Enemy_Hsieh::Enemy_Hsieh(SDL_Renderer* renderer, Uint32 spawnTime, Player* playe
     }
 
     // 初始化血條
-    mHealthBar.setHealth(mHP, 200);
+    mHealthBar.setHealth(mHP, 240);
 }
 
 // 析構函式

@@ -1,11 +1,11 @@
-#include "Victory.h"
+#include "Gameover.h"
 #include <iostream>
 #include <SDL2/SDL_image.h>
 
 using namespace std;
 
 // Constructor for Victory
-Victory::Victory(SDL_Renderer* renderer) {
+Gameover::Gameover(SDL_Renderer* renderer) {
     // Initialize SDL_ttf
     if (TTF_Init() == -1) {
         cout << "Failed to initialize SDL_ttf: " << TTF_GetError() << endl;
@@ -21,13 +21,13 @@ Victory::Victory(SDL_Renderer* renderer) {
     backgroundColor = {252, 234, 222, 255};
 
     // 加載背景圖片
-    backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Background_Victory.jpeg");
+    backgroundTexture = IMG_LoadTexture(renderer, "assets/images/Background_Gameover.jpeg");
     if (!backgroundTexture) {
         cout << "Failed to load background texture: " << IMG_GetError() << endl;
     }
 }
 
-void Victory::handleEvent(SDL_Event& e) {
+void Gameover::handleEvent(SDL_Event& e) {
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.sym == SDLK_ESCAPE) {
             extern Gamemode gamemode;
@@ -37,7 +37,7 @@ void Victory::handleEvent(SDL_Event& e) {
     }
 }
 
-void Victory::render(SDL_Renderer* renderer) {
+void Gameover::render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     SDL_RenderClear(renderer);
 
@@ -47,7 +47,7 @@ void Victory::render(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);
 }
 
-Victory::~Victory() {
+Gameover::~Gameover() {
     if (backgroundTexture) {
         SDL_DestroyTexture(backgroundTexture);
     }
