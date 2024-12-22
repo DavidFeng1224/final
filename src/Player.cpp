@@ -79,10 +79,7 @@ float timeSinceLastCollision = 0.0f;
 void Player::update(double deltaTime) {
     float dirX = mMoveRight - mMoveLeft;
     float dirY = mMoveDown - mMoveUp;
-    if (deltaTime > 1.0 || deltaTime <= 0.0) {
-        std::cerr << "Warning: Abnormal deltaTime: " << deltaTime << std::endl;
-        deltaTime = 0.016; // 使用約等於 60 FPS 的時間
-    }
+    
     if (deltaTime <= 0.0) {
         std::cerr << "Error: Invalid deltaTime value: " << deltaTime << std::endl;
         return;

@@ -108,6 +108,10 @@ void FinalGame::update(double deltaTime) {
     for (BaseEnemy* enemy : enemies) {
         if (enemy->isAlive()) {
             enemy->update(deltaTime);
+            // 檢測並處理玩家與敵人的碰撞
+            if (checkPlayerCollision(player, *enemy)) {
+                resolvePlayerEnemyCollision(enemy);
+            }
         }
     }
 
@@ -219,5 +223,32 @@ bool FinalGame::checkPlayerCollision(const Player& player, const BaseEnemy& enem
 
 // 處理玩家與敵人的碰撞
 void FinalGame::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
-    player.takeDamage(2); // 玩家受到傷害
+    if (!enemy || !enemy->isAlive()) return; // 確保敵人有效且存活
+
+    // 計算方向向量（從敵人指向玩家）
+    float dx = player.getX() - enemy->getX();
+    float dy = player.getY() - enemy->getY();
+    float distance = std::sqrt(dx * dx + dy * dy);
+
+    if (distance < 0.0001f) return; // 避免零向量導致的錯誤
+
+    // 設定方向單位向量
+    float dirX = dx / distance;
+    float dirY = dy / distance;
+
+    // 讓玩家彈開
+    player.startBounce(dirX, dirY);
+
+    // 同時讓敵人稍微移動以避免重疊（反方向）
+    float overlap = player.getRadius() + enemy->getRadius() - distance;
+    if (overlap > 0) {
+        enemy->setPosition(
+            enemy->getX() - dirX * overlap * 0.5f, // 移動一半的重疊距離
+            enemy->getY() - dirY * overlap * 0.5f
+        );
+    }
+
+    // 玩家受到傷害
+    player.takeDamage(2);
 }
+
