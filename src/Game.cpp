@@ -139,12 +139,20 @@ void Game::update(double deltaTime) {
 
     // 處理敵人之間的碰撞
     for (size_t i = 0; i < enemies.size(); ++i) {
+        if(!enemies[i]->isAlive()){
+            enemyLeft--;
+        }
         for (size_t j = i + 1; j < enemies.size(); ++j) {
             if (enemies[i]->isAlive() && enemies[j]->isAlive() &&
                 checkEnemyCollision(*enemies[i], *enemies[j])) {
                 resolveEnemyOverlap(enemies[i], enemies[j]);
             }
         }
+    }
+    if(enemyLeft == 0){
+        extern Gamemode gamemode;  // 引用全域變數
+        gamemode = STORY2;
+        playMusic("assets/sounds/Story_BGM.mp3");
     }
     // 檢查是否需要生成 Enemy_Hsieh
     if (currentTime >= startTime + 20000) {  // 超過 20 秒

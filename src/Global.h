@@ -3,10 +3,12 @@
 
 enum Gamemode {
     MENU,
-    STORY,
+    STORY1,
     INGAME,
+    STORY2,
+    FINALGAME,
     VICTORY,
-    LOSE,
+    GAMEOVER,
     INSTRUCTIONS,
     EXIT
 };

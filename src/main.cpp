@@ -5,8 +5,11 @@
 #include "AudioManager.h"
 #include "Menu.h"
 #include "Game.h"
+#include "FinalGame.h"
 #include "Instruction.h"
-#include "Story.h"
+#include "Story1.h"
+#include "Story2.h"
+#include "Victory.h"
 #include "Global.h"
 #include "Player.h"
 
@@ -69,8 +72,11 @@ int main(int argc, char* args[]) {
 
     Menu menu(gRenderer);
     Game game(gRenderer);
+    FinalGame finalgame(gRenderer);
     Instruction instruction(gRenderer);
-    Story story(gRenderer);
+    Story1 story1(gRenderer);
+    Story2 story2(gRenderer);
+    Victory victory(gRenderer);
     // Create a Player object
     Player player(gRenderer, 200.0);  // Pass renderer and speed to the Player constructor
 
@@ -97,12 +103,24 @@ int main(int argc, char* args[]) {
                     game.handleEvent(e);
                     break;
 
+                case FINALGAME:
+                    finalgame.handleEvent(e);
+                    break;
+
                 case INSTRUCTIONS:
                     instruction.handleEvent(e);
                     break;
 
-                case STORY:
-                    story.handleEvent(e);
+                case STORY1:
+                    story1.handleEvent(e);
+                    break;
+
+                case STORY2:
+                    story2.handleEvent(e);
+                    break;
+
+                case VICTORY:
+                    victory.handleEvent(e);
                     break;
 
                 case EXIT:
@@ -128,12 +146,25 @@ int main(int argc, char* args[]) {
                 game.render(gRenderer);  // 渲染遊戲
                 break;
 
+            case FINALGAME:
+                finalgame.update(deltaTime);  // 使用deltaTime來更新遊戲
+                finalgame.render(gRenderer);  // 渲染遊戲
+                break;
+
             case INSTRUCTIONS:
                 instruction.render(gRenderer);
                 break;
 
-            case STORY:
-                story.render(gRenderer);
+            case STORY1:
+                story1.render(gRenderer);
+                break;
+
+            case STORY2:
+                story2.render(gRenderer);
+                break;
+
+            case VICTORY:
+                victory.render(gRenderer);
                 break;
 
             case EXIT:

@@ -26,6 +26,7 @@ private:
     Uint32 lastSpawnTime;
     SDL_Renderer* mRenderer;
     float spawnDistance = 600.0f;
+    int enemyLeft = 46;
 
     std::queue<Wave> waves;
     Wave currentWave;
