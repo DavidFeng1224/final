@@ -90,6 +90,19 @@ void Player::update(double deltaTime) {
     mPosX += mVelX * deltaTime;
     mPosY += mVelY * deltaTime;
 
+    if (bounceFrames > 0) {
+        // 依 bounceDir，移動 currentBounceDist
+        mPosX += bounceDirX * currentBounceDist;
+        mPosY += bounceDirY * currentBounceDist;
+
+        // 範例: 每幀移動完就遞減
+        bounceFrames--;
+        currentBounceDist -= 2.0f; // 每幀距離少 2
+        if (currentBounceDist < 0) {
+            currentBounceDist = 0; 
+        }
+    }
+
     // Constrain player within screen bounds
     if (mPosX - mRadius < 0) mPosX = mRadius;
     if (mPosX + mRadius > SCREEN_WIDTH) mPosX = SCREEN_WIDTH - mRadius;
@@ -117,6 +130,17 @@ void drawCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
             }
         }
     }
+}
+
+void Player::startBounce(float dirX, float dirY)
+{
+    bounceFrames = 5;        // 預計做 5 幀彈開
+    currentBounceDist = 10;  // 第一幀移動 10
+    // 設定方向單位向量
+    float length = std::sqrt(dirX*dirX + dirY*dirY);
+    if (length == 0) length = 1; 
+    bounceDirX = dirX / length;
+    bounceDirY = dirY / length;
 }
 
 void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
@@ -147,33 +171,43 @@ void Player::render(SDL_Renderer* renderer, int mouseX, int mouseY) {
     mHealthBar.render(renderer);
 }
 
+// 
 void Player::resolveCollision(BaseEnemy& enemy, int& bounceStep) {
     float deltaX = enemy.getX() - mPosX;
     float deltaY = enemy.getY() - mPosY;
     float distance = std::sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    if (distance < mRadius + enemy.getRadius()) {
-        // 計算反彈方向
+    float overlap = mRadius + enemy.getRadius() - distance; 
+
+    if (overlap > 0) {
+        // 1) 立即分離 (避免疊在一起)
         float dirX = deltaX / distance;
         float dirY = deltaY / distance;
+        float bounceDistance = std::max(static_cast<float>(bounceStep), overlap);
 
-        // 彈開距離（逐步減少）
-        float bounceDistance = static_cast<float>(bounceStep);
-
-        // 玩家與敵人各自反彈
+        // 玩家馬上往 -dir 移
         mPosX -= dirX * bounceDistance;
         mPosY -= dirY * bounceDistance;
+        // 敵人馬上往 +dir 移
         enemy.setPosition(
             enemy.getX() + dirX * bounceDistance,
             enemy.getY() + dirY * bounceDistance
         );
 
-        // 減少彈開步驟
-        if (bounceStep > 0) {
+        // 2) 後續滑順彈開
+        //    讓玩家與敵人都各自 startBounce
+        //    (玩家往 -dir, 敵人往 +dir)
+        startBounce(-deltaX, -deltaY);
+        enemy.startBounce(deltaX, deltaY);
+
+        // 確保 bounceStep 遞減 (若你要保留的話)
+        if (distance >= mRadius + enemy.getRadius() && bounceStep > 0) {
             --bounceStep;
         }
     }
 }
+
+
 
 
 void Player::fireBullet(int mouseX, int mouseY) {

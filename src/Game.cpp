@@ -130,15 +130,16 @@ void Game::update(double deltaTime) {
         }
     }
 
+//     
+
     // 處理玩家與敵人的碰撞
     for (BaseEnemy* enemy : enemies) {
-    static int bounceStep = 10;  // 彈開的初始步驟
-    if (enemy->isAlive() && checkPlayerCollision(player, *enemy)) {
-        player.resolveCollision(*enemy, bounceStep);
-        player.takeDamage(2);  // 玩家受傷
+        int bounceStep = 10;  // 每次初始化反彈步驟數
+        while (enemy->isAlive() && checkPlayerCollision(player, *enemy)) {
+            player.resolveCollision(*enemy, bounceStep);
+            player.takeDamage(2);  // 玩家受傷
+        }
     }
-}
-
 
     // 處理敵人之間的碰撞
     for (size_t i = 0; i < enemies.size(); ++i) {

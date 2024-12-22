@@ -99,6 +99,14 @@ void FinalGame::handleEvent(SDL_Event& e) {
     player.handleEvent(e);  // 傳遞事件給玩家進行處理
 }
 
+void FinalGame::constrainPlayerToBounds() {
+    player.setPosition(
+        std::clamp(player.getX(), static_cast<float>(player.getRadius()), static_cast<float>(SCREEN_WIDTH - player.getRadius())),
+        std::clamp(player.getY(), static_cast<float>(player.getRadius()), static_cast<float>(SCREEN_HEIGHT - player.getRadius()))
+    );
+}
+
+
 // Update game logic
 void FinalGame::update(double deltaTime) {
     Uint32 currentTime = SDL_GetTicks();  // 獲取當前時間
@@ -207,6 +215,51 @@ void FinalGame::render(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);  // 更新畫面
 }
 
+void FinalGame::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
+    static int bounceStep = 10;  // 彈開的初始步驟數
+    while (checkPlayerCollision(player, *enemy) && bounceStep > 0) {
+        float deltaX = enemy->getX() - player.getX();
+        float deltaY = enemy->getY() - player.getY();
+        float distance = std::sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        if (distance == 0.0f) {
+            deltaX = 1.0f;  // 防止除以零
+            deltaY = 0.0f;
+            distance = 1.0f;
+        }
+
+        float overlap = player.getRadius() + enemy->getRadius() - distance;
+
+        if (overlap > 0) {
+            float dirX = deltaX / distance;
+            float dirY = deltaY / distance;
+            float bounceDistance = std::max(static_cast<float>(bounceStep), overlap);
+
+            // 更新玩家位置
+            player.setPosition(
+                player.getX() - dirX * bounceDistance,
+                player.getY() - dirY * bounceDistance
+            );
+
+            // 更新敵人位置
+            enemy->setPosition(
+                enemy->getX() + dirX * bounceDistance,
+                enemy->getY() + dirY * bounceDistance
+            );
+
+            // 限制玩家和敵人位置在螢幕範圍內
+            constrainPlayerToBounds();
+            constrainEnemyToBounds(enemy);
+        }
+
+        bounceStep--;
+    }
+
+    // 玩家扣血
+    player.takeDamage(2);
+}
+
+
 void FinalGame::spawnEnemySum() {
     float degree = static_cast<float>(rand() % 360);
     float x = player.getX() + spawnDistance * std::cos(degree * M_PI / 180);
@@ -300,8 +353,10 @@ void FinalGame::resolveEnemyOverlap(BaseEnemy* enemy1, BaseEnemy* enemy2) {
         enemy2->getY() - dy * moveFactor);
 }
 
-// Resolve collision between player and an enemy
-void FinalGame::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
-    player.takeDamage(2);  // 玩家受傷
-    // cout << "Player collided with enemy and took damage!" << endl;
+void FinalGame::constrainEnemyToBounds(BaseEnemy* enemy) {
+    enemy->setPosition(
+        std::clamp(enemy->getX(), static_cast<float>(enemy->getRadius()), static_cast<float>(SCREEN_WIDTH - enemy->getRadius())),
+        std::clamp(enemy->getY(), static_cast<float>(enemy->getRadius()), static_cast<float>(SCREEN_HEIGHT - enemy->getRadius()))
+    );
 }
+

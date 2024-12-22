@@ -22,6 +22,8 @@ class Player {
     void resolveCollision(BaseEnemy& enemy, int& bounceStep);
     void fireBullet(int mouseX, int mouseY);
     void setPosition(float x, float y);  // Declare setPosition method
+    void startBounce(float dirX, float dirY);
+
 
     float getX() const { return mPosX; }
     float getY() const { return mPosY; }
@@ -41,6 +43,9 @@ class Player {
     int mRadius;
     bool mMoveUp, mMoveDown, mMoveLeft, mMoveRight;
     int mHP;                      // 玩家生命值
+    int   bounceFrames;       // 還剩多少幀要做彈開
+    float currentBounceDist;  // 這一幀要移動的距離
+    float bounceDirX, bounceDirY; // 碰撞時的方向單位向量
     HealthBar mHealthBar;         // 添加血條
     std::vector<Bullet> bullets;  // Container for bullets
 

@@ -61,3 +61,14 @@ void BaseEnemy::render(SDL_Renderer* renderer) {
     mHealthBar.updatePosition(healthBarX, healthBarY);
     mHealthBar.render(renderer);
 }
+
+void BaseEnemy::startBounce(float dirX, float dirY) {
+    bounceFrames = 5;        // 預計做 5 幀彈開
+    currentBounceDist = 10;  // 第一幀移動 10
+    // 設定方向單位向量
+    float length = std::sqrt(dirX*dirX + dirY*dirY);
+    if (length == 0) length = 1; 
+    bounceDirX = dirX / length;
+    bounceDirY = dirY / length;
+}
+

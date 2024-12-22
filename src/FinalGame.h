@@ -36,6 +36,12 @@ private:
     void spawnEnemyIntegral();
     void spawnEnemyANDGate();
     void resolvePlayerEnemyCollision(BaseEnemy* enemy); // 處理玩家與敵人的碰撞
+    
+    int bounceStep = 10; // 滑順碰撞的初始彈開步驟數
+
+    void constrainPlayerToBounds(); // 限制玩家在螢幕內
+    void constrainEnemyToBounds(BaseEnemy* enemy); // 限制敵人在螢幕內
+    void resolvePlayerEnemyCollision(BaseEnemy* enemy, int& bounceStep); // 支持滑順碰撞的玩家與敵人處理
 
 public:
     FinalGame(SDL_Renderer* renderer);

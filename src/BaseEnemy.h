@@ -15,6 +15,11 @@ protected:
     SDL_Texture* Texture;
     SDL_Renderer* renderer;
     HealthBar mHealthBar;     // 血條
+    // 讓敵人也能記錄「剩餘彈開幀數」、「當前移動距離」、「方向向量」等
+    int   bounceFrames     = 0;   // 還剩多少幀要做彈開
+    float currentBounceDist = 0;  // 這一幀要移動的距離
+    float bounceDirX       = 0;   // 碰撞時的方向單位向量 (X)
+    float bounceDirY       = 0;   // 碰撞時的方向單位向量 (Y)
 
 public:
     BaseEnemy(SDL_Renderer* renderer, float speed = 1.0f); // 構造函數
@@ -31,6 +36,8 @@ public:
     void takeDamage(int damage);           // 減少血量
     bool isAlive() const;                  // 檢查敵人是否存活
     void setPosition(float x, float y);    // 設置敵人位置
+    void startBounce(float dirX, float dirY);
+
 };
 
 #endif
