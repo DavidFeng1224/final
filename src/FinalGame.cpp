@@ -149,13 +149,13 @@ void FinalGame::spawnEnemyHsieh() {
 }
 
 // 生成 Sum 類型敵人
-void FinalGame::spawnEnemySum() {
-    float degree = static_cast<float>(rand() % 360);
-    float x = player.getX() + spawnDistance * cos(degree * M_PI / 180);
-    float y = player.getY() + spawnDistance * sin(degree * M_PI / 180);
-    enemies.push_back(new Enemy_Sum(mRenderer));
-    enemies.back()->setPosition(x, y);
-}
+// void FinalGame::spawnEnemySum() {
+//     float degree = static_cast<float>(rand() % 360);
+//     float x = player.getX() + spawnDistance * cos(degree * M_PI / 180);
+//     float y = player.getY() + spawnDistance * sin(degree * M_PI / 180);
+//     enemies.push_back(new Enemy_Sum(mRenderer));
+//     enemies.back()->setPosition(x, y);
+// }
 
 // 生成 Integral 類型敵人
 void FinalGame::spawnEnemyIntegral() {
@@ -207,6 +207,43 @@ bool FinalGame::checkPlayerCollision(const Player& player, const BaseEnemy& enem
     float radiusSum = player.getRadius() + enemy.getRadius();
     return distanceSquared <= radiusSum * radiusSum;
 }
+
+bool FinalGame::isPositionOverlapping(float x, float y, float radius) const {
+    for (const auto* enemy : enemies) {
+        if (enemy->isAlive()) {
+            float dx = enemy->getX() - x;
+            float dy = enemy->getY() - y;
+            float distanceSquared = dx * dx + dy * dy;
+            float combinedRadius = enemy->getRadius() + radius;
+
+            if (distanceSquared < combinedRadius * combinedRadius) {
+                return true; // 發生重疊
+            }
+        }
+    }
+    return false; // 沒有重疊
+}
+
+void FinalGame::spawnEnemySum() {
+    float x, y;
+    int maxAttempts = 100; // 最多嘗試次數，避免無限迴圈
+    int attempts = 0;
+
+    do {
+        float degree = static_cast<float>(rand() % 360);
+        x = player.getX() + spawnDistance * cos(degree * M_PI / 180);
+        y = player.getY() + spawnDistance * sin(degree * M_PI / 180);
+        attempts++;
+    } while (isPositionOverlapping(x, y, 30.0f) && attempts < maxAttempts);
+
+    if (attempts < maxAttempts) {
+        enemies.push_back(new Enemy_Sum(mRenderer));
+        enemies.back()->setPosition(x, y);
+    } else {
+        std::cerr << "Failed to spawn Enemy_Sum after " << maxAttempts << " attempts!" << std::endl;
+    }
+}
+
 
 // 處理玩家與敵人的碰撞
 void FinalGame::resolvePlayerEnemyCollision(BaseEnemy* enemy) {
