@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -I./src/include -static
-LDFLAGS = -L./src/lib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LDFLAGS = -L./src/lib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -llibc++ -llibunwind
 
 # Directories
 SRC_DIR = src
